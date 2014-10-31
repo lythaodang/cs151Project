@@ -7,10 +7,10 @@
  */
 
 /**
- * Implements the Receipt interface, generating a simple receipt that details the
+ * Implements the Receipt interface, generating a comprehensive receipt that details the
  * user's stay and amount to pay in length.
  */
-public class SimpleReceipt implements Receipt
+public class ComprehensiveReceipt implements Receipt
 {
     private double total;
     private double subTotal;
@@ -19,25 +19,28 @@ public class SimpleReceipt implements Receipt
     private static double TAX = .0875;
 
     /**
-     * Constructor for a simple receipt, takes the cost of a room per night and the amount of
+     * Constructor for a comprehensive receipt, takes the cost of a room per night and the amount of
      * nights stayed.
      * @param roomCost Cost of the room per night.
      * @param days Number of nights stayed.
      */
-    public SimpleReceipt (int roomCost, int days)
+    public ComprehensiveReceipt (int roomCost, int days)
     {
         this.roomCost = roomCost;
         this.days = days;
     }
 
     /**
-     * Generates a formatted receipt in simple form.
-     * @return simple receipt.
+     * Generates a formatted receipt in comprehensive form.
+     * @return Comprehensive receipt.
      */
     public String toString()
     {
         String receipt = "";
-        receipt += "Nights stayed: " + days + ".\n";
+        for (int i = 0; i < days; i++)
+        {
+            receipt += "1 Night: " + roomCost + ".\n";
+        }
         subTotal = roomCost * days;
         receipt += "Subtotal: " + subTotal + ".\n";
         double tax = subTotal * TAX;
