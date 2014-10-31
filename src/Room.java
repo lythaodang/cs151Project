@@ -1,5 +1,3 @@
-import src.Account;
-
 /**
  * COPYRIGHT (C) 2014 InfiniteLoops. All Rights Reserved.
  * A room for reservation.
