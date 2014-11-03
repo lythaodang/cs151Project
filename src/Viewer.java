@@ -1,5 +1,7 @@
+import java.awt.BorderLayout;
 import java.awt.CardLayout;
-import java.awt.FlowLayout;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -75,14 +77,22 @@ public class Viewer
 	{
 		public GuestPanel(JPanel cards)
 		{
-			setLayout(new FlowLayout());
+			setLayout(new BorderLayout());
+			
+			JPanel userInput = new JPanel();
+			
 			JLabel requestID = new JLabel("Enter user ID: ");
+			requestID.setFont(new Font("Serif", Font.PLAIN, 16));
 			JTextField enterID = new JTextField();
+			enterID.setPreferredSize(new Dimension(200, 30));
+			
+			userInput.add(requestID);
+			userInput.add(enterID);
+			
 			JButton create = new JButton("Create an account");
 			
-			add(requestID);
-			add(enterID);
-			add(create);
+			add(userInput, BorderLayout.NORTH);
+			add(create, BorderLayout.SOUTH);
 		}
 	}
 }
