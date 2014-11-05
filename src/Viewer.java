@@ -1,10 +1,9 @@
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -30,7 +29,8 @@ public class Viewer
 		cards = new JPanel(new CardLayout());
 		
 		cards.add(new InitialPanel(cards), "Initial");
-		cards.add(new GuestPanel(cards), "Guest");
+		cards.add(new ReturningGuestPanel(cards), "RGuest");
+		cards.add(new NewGuestPanel(cards), "NGuest");
 		
 		frame.add(cards);
 		frame.setSize(500, 500);
@@ -38,72 +38,124 @@ public class Viewer
 		frame.setVisible(true);
 	}
 	
+	public class SwitchListener implements ActionListener
+	{
+		JPanel cards;
+		String name;
+		
+		public SwitchListener(JPanel cards, String name)
+		{
+			this.cards = cards;
+			this.name = name;
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent e)
+		{
+			CardLayout cl = (CardLayout)(cards.getLayout());
+			cl.show(cards, name);
+		}
+	}
+	
 	public class InitialPanel extends JPanel
 	{
 		public InitialPanel(final JPanel cards)
 		{
-			setLayout(new BorderLayout());
+			setLayout(new GridLayout(3, 1));
 			
-			JButton guest = new JButton("Guest");
-			guest.setFont(guest.getFont().deriveFont(36f));
-			guest.setPreferredSize(new Dimension(200, 500));
+			JButton returningGuest = new JButton("Returning Guest");
+			returningGuest.setFont(returningGuest.getFont().deriveFont(36f));
+			
+			JButton newGuest = new JButton("New Guest");
+			newGuest.setFont(newGuest.getFont().deriveFont(36f));
 			
 			JButton manager = new JButton("Manager");
 			manager.setFont(manager.getFont().deriveFont(36f));
-			manager.setPreferredSize(new Dimension(200, 500));
 			
-			add(guest, BorderLayout.WEST);
-			add(manager, BorderLayout.EAST);
+			add(returningGuest);
+			add(newGuest);
+			add(manager);
 			
-			guest.addActionListener(new 
-					ActionListener()
-					{
-						@Override
-						public void actionPerformed(ActionEvent e)
-						{
-							CardLayout cl = (CardLayout)(cards.getLayout());
-							cl.show(cards, "Guest");
-						}
-					}
-			);
-			
-			manager.addActionListener(new 
-					ActionListener()
-					{
-						@Override
-						public void actionPerformed(ActionEvent e)
-						{
-							CardLayout cl = (CardLayout)(cards.getLayout());
-							cl.show(cards, "Manager");
-						}
-					}
-			);
+			returningGuest.addActionListener(new SwitchListener(cards, "RGuest"));
+			newGuest.addActionListener(new SwitchListener(cards, "NGuest"));
+			manager.addActionListener(new SwitchListener(cards, "Manager"));
 		}
 	}
 	
-	public class GuestPanel extends JPanel
+	public class NewGuestPanel extends JPanel
 	{
-		public GuestPanel(JPanel cards)
+		public NewGuestPanel(JPanel cards)
 		{
-			setLayout(new BorderLayout());
+			setLayout(new BorderLayout(0, 25));
 			
-			JPanel userInput = new JPanel();
-			userInput.setLayout(new FlowLayout(FlowLayout.CENTER));
-			JLabel requestID = new JLabel("Enter user ID: ");
-			requestID.setFont(requestID.getFont().deriveFont(32f));
+			JLabel instructions = new JLabel("<html>Fill out the following information."
+					+ "<br>The user ID should be at least 6 characters.</html");
+			instructions.setFont(instructions.getFont().deriveFont(20f));
 			
-			JTextField enterID = new JTextField();
-			enterID.setPreferredSize(new Dimension(200, 50));
+			JPanel info = new JPanel(new GridLayout(3, 2, 0, 25));
 			
-			userInput.add(requestID);
-			userInput.add(enterID);
+			JLabel firstLabel = new JLabel("First name:");
+			firstLabel.setFont(firstLabel.getFont().deriveFont(32f));
+			JTextField firstTextField = new JTextField();
+			firstTextField.setFont(firstTextField.getFont().deriveFont(32f));
 			
-			JButton create = new JButton("Create an account");
-			create.setPreferredSize(new Dimension(500, 200));
-			create.setFont(create.getFont().deriveFont(32f));
+			JLabel lastLabel = new JLabel("Last name:");
+			lastLabel.setFont(lastLabel.getFont().deriveFont(32f));
+			JTextField lastTextField = new JTextField();
+			lastTextField.setFont(lastTextField.getFont().deriveFont(32f));
 			
-			add(userInput, BorderLayout.NORTH);
-			add(create, BorderLayout.SOUTH);
+			JLabel userIDLabel = new JLabel("User ID:");
+			userIDLabel.setFont(userIDLabel.getFont().deriveFont(32f));
+			JTextField userIDTextField = new JTextField();
+			userIDTextField.setFont(userIDTextField.getFont().deriveFont(32f));
+			
+			info.add(firstLabel);
+			info.add(firstTextField);
+			info.add(lastLabel);
+			info.add(lastTextField);
+			info.add(userIDLabel);
+			info.add(userIDTextField);
+			
+			JButton submitButton = new JButton("Submit");
+			submitButton.setFont(submitButton.getFont().deriveFont(32f));
+			
+			JButton backButton = new JButton("Back");
+			backButton.setFont(backButton.getFont().deriveFont(32f));
+			backButton.addActionListener(new SwitchListener(cards, "Initial"));
+			
+			JPanel buttonsPanel = new JPanel(new GridLayout(1, 2));
+			buttonsPanel.add(backButton);
+			buttonsPanel.add(submitButton);
+			
+			add(instructions, BorderLayout.NORTH);
+			add(info, BorderLayout.CENTER);
+			add(buttonsPanel, BorderLayout.SOUTH);
+		}
+	}
+	
+	public class ReturningGuestPanel extends JPanel
+	{
+		public ReturningGuestPanel(JPanel cards)
+		{
+			setLayout(new GridLayout(2, 2, 0, 100));
+			
+			JLabel userIDLabel = new JLabel("Enter user ID: ");
+			userIDLabel.setFont(userIDLabel.getFont().deriveFont(32f));
+			JTextField userIDTextField = new JTextField();
+			userIDTextField.setFont(userIDTextField.getFont().deriveFont(32f));
+			userIDTextField.setPreferredSize(new Dimension(200, 40));
+			
+			JButton submitButton = new JButton("Submit");
+			submitButton.setFont(submitButton.getFont().deriveFont(32f));
+			
+			JButton backButton = new JButton("Back");
+			backButton.setFont(backButton.getFont().deriveFont(32f));
+			backButton.addActionListener(new SwitchListener(cards, "Initial"));
+			
+			add(userIDLabel);
+			add(userIDTextField);
+			add(backButton);
+			add(submitButton);
 		}
 	}
 }
