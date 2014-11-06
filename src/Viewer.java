@@ -46,6 +46,7 @@ public class Viewer
 		addInitialPanel();
 		addNewGuestPanel();
 		addReturningGuestPanel();
+		addGuestMenu();
 		addManagerPanel();
 		
 		frame.add(cards);
@@ -109,7 +110,8 @@ public class Viewer
 		c.fill = GridBagConstraints.BOTH;
 
 		JLabel instructions = new JLabel("<html>Fill out the following information."
-				+ "<br>The user ID should be at least 6 characters and at most 12 "
+				+ "<br>Your user ID should be at least 6 characters and at most 12 "
+				+ "characters. Your first and last name should not exceed 15 "
 				+ "characters.</html>");
 		c.insets = new Insets(10, 10, 10, 10); 
 		c.gridwidth = 2;
@@ -174,27 +176,41 @@ public class Viewer
 					public void actionPerformed(ActionEvent arg0)
 					{
 						String message = "";
+						String userID = userIDTextField.getText();
+						String firstName = firstTextField.getText();
+						String lastName = lastTextField.getText();
 						
-						if (firstTextField.getText().length() < 1 
-								|| lastTextField.getText().length() < 1
-								|| userIDTextField.getText().length() < 1)
+						if (firstName.length() < 1 || lastName.length() < 1
+								|| userID.length() < 1)
 						{
 							message = "One or more fields not entered. "
 									+ "Please try again.";
 							JOptionPane.showMessageDialog(new JFrame(), message, 
 									"Error", JOptionPane.ERROR_MESSAGE);
 						}
-						else if (userIDTextField.getText().length() < 6)
+						else if (firstName.length() > 15 || lastName.length() > 15)
+						{
+							message = "Error: First or/and last name(s) are too long.";
+							JOptionPane.showMessageDialog(new JFrame(), message, 
+									"Error", JOptionPane.ERROR_MESSAGE);
+						}
+						else if (userID.length() < 6)
 						{
 							message = "Error: User ID is less than 6 "
 									+ "characters. Please try again.";
 							JOptionPane.showMessageDialog(new JFrame(), message, 
 									"Error", JOptionPane.ERROR_MESSAGE);
 						}
-						else if (userIDTextField.getText().length() > 12)
+						else if (userID.length() > 12)
 						{
 							message = "Error: User ID is more than 12 "
 									+ "characters. Please try again.";
+							JOptionPane.showMessageDialog(new JFrame(), message, 
+									"Error", JOptionPane.ERROR_MESSAGE);
+						}
+						else if (database.findUser(userID) != null)
+						{
+							message = "Error: User ID taken. Please try again.";
 							JOptionPane.showMessageDialog(new JFrame(), message, 
 									"Error", JOptionPane.ERROR_MESSAGE);
 						}
@@ -202,8 +218,11 @@ public class Viewer
 						{
 							Account newAccount = new Account(userIDTextField.getText(), 
 									firstTextField.getText(), lastTextField.getText());
-							// add account to Model
-							// set account as current user in Model
+							firstTextField.setText("");
+							lastTextField.setText("");
+							userIDTextField.setText("");
+							database.addAccount(newAccount);
+							database.setCurrentUser(newAccount);
 							cardLayout.show(cards, "Guest Menu");
 						}
 					}
@@ -263,15 +282,16 @@ public class Viewer
 					@Override
 					public void actionPerformed(ActionEvent arg0)
 					{
+						String userID = userIDTextField.getText();
 						String message = "";
-						if (userIDTextField.getText().length() < 6 ||
-								userIDTextField.getText().length() > 12)
+						
+						if (userID.length() < 6 || userID.length() > 12)
 						{
 							message = "Error: Entered user ID is invalid.";
 							JOptionPane.showMessageDialog(new JFrame(), message, 
 									"Error", JOptionPane.ERROR_MESSAGE);
 						}
-						else if (message != "")
+						else if (database.findUser(userID) == null)
 						{
 							message = "Error: User ID does not exist in the system.";
 							JOptionPane.showMessageDialog(new JFrame(), message, 
@@ -279,7 +299,8 @@ public class Viewer
 						}
 						else
 						{
-							// set current user
+							userIDTextField.setText("");
+							database.setCurrentUser(database.findUser(userID));
 							cardLayout.show(cards, "Guest Menu");
 						}
 					}
@@ -293,33 +314,54 @@ public class Viewer
 	
 	public void addGuestMenu()
 	{
-		JPanel panel = new JPanel(new GridLayout(3, 1));
+		JPanel panel = new JPanel(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.fill = GridBagConstraints.BOTH;
 		
 		final JLabel name = new JLabel();
-		
 		ChangeListener listener = new
 				ChangeListener()
 				{
 					@Override
 					public void stateChanged(ChangeEvent event)
 					{
-						name.setText("User: " + database.getCurrentUserName());
+						name.setText("<html>User:<br>" + 
+								database.getCurrentUserName() + "</html>");
 					}
 				};
-				
 		database.addChangeListener(listener);
+		c.weightx = 1;
+		c.weighty = 1;
+		c.insets = new Insets(10, 10, 10, 10); 
+		panel.add(name, c);
+		
+		JButton backButton = new JButton("Sign out");
+		backButton.addActionListener(new 
+				ActionListener()
+				{
+					@Override
+					public void actionPerformed(ActionEvent e)
+					{
+						database.setCurrentUser(null);
+						cardLayout.show(cards, "Initial");
+					}
+				});
+		c.gridx = 1;
+		panel.add(backButton, c);
 		
 		JButton make = new JButton("Make a Reservation");
 		make.addActionListener(new SwitchListener("Make Reservation"));
+		c.gridwidth = 2;
+		c.gridx = 0;
+		c.gridy = 1;
+		panel.add(make, c);
 		
 		JButton viewCancel = new JButton("View/Cancel a Reservation");
 		viewCancel.addActionListener(new SwitchListener("View Cancel"));
+		c.gridy = 2;
+		panel.add(viewCancel, c);
 		
-		panel.add(name);
-		panel.add(make);
-		panel.add(viewCancel);
-		
-		cards.add(cards, "Guest Menu");
+		cards.add(panel, "Guest Menu");
 	}
 	
 	public void addManagerPanel()

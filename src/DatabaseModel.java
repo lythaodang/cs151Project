@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+
+import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 /**
@@ -47,6 +49,10 @@ public class DatabaseModel
 	public void setCurrentUser(Account currentUser)
 	{
 		this.currentUser = currentUser;
+		
+		ChangeEvent event = new ChangeEvent(this);
+		for (ChangeListener listener : listeners)
+			listener.stateChanged(event);
 	}
 	
 	/**
@@ -55,9 +61,36 @@ public class DatabaseModel
 	 */
 	public String getCurrentUserName()
 	{
-		return currentUser.getFirstName() + " " + currentUser.getLastName();
+		if (currentUser != null)
+			return currentUser.getFirstName().toUpperCase() + " " 
+			+ currentUser.getLastName().toUpperCase();
+		else
+			return "";
+	}
+	
+	/**
+	 * Looks for a user ID in the system.
+	 * @return account of user if found, otherwise null
+	 */
+	public Account findUser(String userID)
+	{
+		for (Account a : accounts)
+		{
+			if (a.getUserID().equals(userID))
+				return a;
+		}
+		return null;
 	}
 
+	/**
+	 * Add an account to the database.
+	 * @param account the account to add
+	 */
+	public void addAccount(Account account)
+	{
+		accounts.add(account);
+	}
+	
 	/**
 	 * Returns the ArrayList of rooms available in the hotel.
 	 * @return the rooms
