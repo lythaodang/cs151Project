@@ -13,8 +13,9 @@ import java.util.ArrayList;
  */
 public class Account
 {
-	private int userID;
-	private String name;
+	private String userID;
+	private String firstName;
+	private String lastName;
 	ArrayList<Reservation> reservations;
 	
 	/**
@@ -22,10 +23,11 @@ public class Account
 	 * @param userID the user's ID
 	 * @param name the user's name
 	 */
-	public Account(int userID, String name)
+	public Account(String userID, String firstName, String lastName)
 	{
 		this.userID = userID;
-		this.name = name;
+		this.firstName = firstName;
+		this.lastName = lastName;
 		reservations = new ArrayList<Reservation>();
 	}
 	
@@ -60,7 +62,7 @@ public class Account
 	 * Returns the user's ID.
 	 * @return the userID
 	 */
-	public int getUserID()
+	public String getUserID()
 	{
 		return userID;
 	}
@@ -69,26 +71,44 @@ public class Account
 	 * Sets the user's ID.
 	 * @param userID the userID to set
 	 */
-	public void setUserID(int userID)
+	public void setUserID(String userID)
 	{
 		this.userID = userID;
 	}
 
 	/**
-	 * Gets the user's name.
+	 * Gets the user's first name.
 	 * @return the name
 	 */
-	public String getName()
+	public String getFirstName()
 	{
-		return name;
+		return firstName;
 	}
 
 	/**
-	 * Sets the user's name.
+	 * Sets the user's first name.
 	 * @param name the name to set
 	 */
-	public void setName(String name)
+	public void setFirstName(String firstName)
 	{
-		this.name = name;
+		this.firstName = firstName;
+	}
+	
+	/**
+	 * Gets the user's last name.
+	 * @return the name
+	 */
+	public String getLastName()
+	{
+		return lastName;
+	}
+
+	/**
+	 * Sets the user's last name.
+	 * @param name the name to set
+	 */
+	public void setLastName(String lastName)
+	{
+		this.lastName = lastName;
 	}
 }

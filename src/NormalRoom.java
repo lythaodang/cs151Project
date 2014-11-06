@@ -9,32 +9,31 @@
 public class NormalRoom implements Room
 {
 	private final double COST = 80;
+	private int roomNumber;
 	
-	/**
-	 * Gets the cost
-	 * returns the cost
-	 */
+	public NormalRoom(int roomNumber)
+	{
+		this.roomNumber = roomNumber;
+	}
+	
+	@Override
+	public int getRoomNumber()
+	{
+		return roomNumber;
+	}
+	
 	@Override
 	public double getCost() 
 	{
 		return COST;
 	}
 	
-	/**
-	 * Checks if room is reserved
-	 * @return boolean if room is reserved or not
-	 */
 	@Override
 	public boolean isReserved() 
 	{
 		return false;
 	}
 	
-	/**
-	 * Gets who is reserving the room
-	 * @param account the account
-	 * @return the account
-	 */
 	@Override
 	public Account reservedBy(Account account) 
 	{

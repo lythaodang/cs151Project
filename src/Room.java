@@ -9,6 +9,12 @@
 public interface Room
 {
 	/**
+	 * Gets the room number.
+	 * @return the room number
+	 */
+	int getRoomNumber();
+	
+	/**
 	 * Gets the cost
 	 * @return the cost
 	 */
