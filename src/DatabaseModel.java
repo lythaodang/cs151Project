@@ -1,3 +1,8 @@
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 import javax.swing.event.ChangeEvent;
@@ -119,5 +124,46 @@ public class DatabaseModel
 	public void addChangeListener(ChangeListener listener)
 	{
 		listeners.add(listener);
+	}
+	
+	public void serialize() 
+	{
+		try
+		{
+			FileOutputStream file = new FileOutputStream("accounts.ser");
+			ObjectOutputStream out = new ObjectOutputStream(file);
+			out.writeObject(accounts);
+			out.close();
+			file.close();
+		}
+		catch(IOException io)
+	    {
+	        io.printStackTrace();
+	        return;
+	    }
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void deserialize()
+	{
+		try
+	        {
+				FileInputStream file = new FileInputStream("accounts.ser");
+				ObjectInputStream input = new ObjectInputStream(file);
+				accounts = (ArrayList<Account>) input.readObject();
+				input.close();
+				file.close();
+			}
+			catch(IOException io)
+			{
+				io.printStackTrace();
+				return;
+	        }
+			catch(ClassNotFoundException c)
+			{
+	            //System.out.println("Class not found");
+	            c.printStackTrace();
+	            return;
+	        }
 	}
 }

@@ -1,3 +1,4 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -11,7 +12,7 @@ import java.util.ArrayList;
 /**
  * A user's account. 
  */
-public class Account
+public class Account implements Serializable
 {
 	private String userID;
 	private String firstName;

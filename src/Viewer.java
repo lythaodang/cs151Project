@@ -40,6 +40,7 @@ public class Viewer
 	public Viewer(final DatabaseModel database)
 	{
 		this.database = database;
+		database.deserialize();
 		frame = new JFrame("InfiniteLoops Hotel Manager");
 		cards = new JPanel(cardLayout = new CardLayout());
 		
@@ -366,14 +367,72 @@ public class Viewer
 	
 	public void addManagerPanel()
 	{
-		JPanel panel = new JPanel();
+		JPanel panel = new JPanel(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.fill = GridBagConstraints.BOTH;
+		
+		JLabel name = new JLabel();
+		name.setText("<html>User:<br>" + "Manager" + "</html>");
+		c.weightx = 1;
+		c.weighty = 1;
+		c.insets = new Insets(10, 10, 10, 10); 
+		panel.add(name, c);
 		
 		// two drop down one for month one for year
 		// a calendar (probably buttons for each day? grid layout?)
 		// room info
-		JButton backButton = new JButton("Back");
-		backButton.addActionListener(new SwitchListener("Initial"));
-		panel.add(backButton);
+		
+		JButton backButton = new JButton("Sign out");
+		backButton.addActionListener(new 
+				ActionListener()
+				{
+					@Override
+					public void actionPerformed(ActionEvent e)
+					{
+						cardLayout.show(cards, "Initial");
+					}
+				});
+		c.gridx = 1;
+		panel.add(backButton, c);
+		
+		JButton view = new JButton("View");
+		view.addActionListener(new SwitchListener("View"));
+		c.gridwidth = 2;
+		c.gridx = 0;
+		c.gridy = 1;
+		panel.add(view, c);
+		
+		// not sure if this is still needed since it loads up, but I left for debate
+		JButton load = new JButton("Load");
+		load.addActionListener(new 
+				ActionListener()
+				{
+					@Override
+					public void actionPerformed(ActionEvent e)
+					{
+						String loaded = "Accounts and reservations have been loaded.";
+						database.deserialize();
+						JOptionPane.showMessageDialog(new JFrame(), loaded);
+					}
+				}
+				);
+		c.gridy = 2;
+		panel.add(load, c);
+		
+		JButton save = new JButton("Save/Quit");
+		save.addActionListener(new 
+				ActionListener()
+				{
+					@Override
+					public void actionPerformed(ActionEvent e)
+					{
+						database.serialize();
+						System.exit(0);
+					}
+				});
+		c.gridy = 3;
+		panel.add(save, c);
+		
 		cards.add(panel, "Manager");
 	}
 }
