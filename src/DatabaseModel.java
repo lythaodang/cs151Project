@@ -161,7 +161,6 @@ public class DatabaseModel
 	        }
 			catch(ClassNotFoundException c)
 			{
-	            //System.out.println("Class not found");
 	            c.printStackTrace();
 	            return;
 	        }

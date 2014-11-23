@@ -30,6 +30,7 @@ import javax.swing.event.ChangeListener;
 public class Viewer
 {
 	private DatabaseModel database;
+	private Controller controller;
 	private JFrame frame;
 	private final JPanel cards;
 	private CardLayout cardLayout;
@@ -49,6 +50,7 @@ public class Viewer
 		addReturningGuestPanel();
 		addGuestMenu();
 		addManagerPanel();
+		addReservationPanel();
 		
 		frame.add(cards);
 		frame.setSize(400, 400);
@@ -56,6 +58,7 @@ public class Viewer
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // change for load/save functionality
 		frame.setVisible(true);
+		controller = new Controller(this.database, this);
 	}
 	
 	/**
@@ -281,7 +284,7 @@ public class Viewer
 				ActionListener()
 				{
 					@Override
-					public void actionPerformed(ActionEvent arg0)
+					public void actionPerformed(ActionEvent e)
 					{
 						String userID = userIDTextField.getText();
 						String message = "";
@@ -434,5 +437,75 @@ public class Viewer
 		panel.add(save, c);
 		
 		cards.add(panel, "Manager");
+	}
+	
+	public void addReservationPanel()
+	{
+		JPanel panel = new JPanel(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.fill = GridBagConstraints.BOTH;
+		
+		JLabel instructions = new JLabel("<html>Please enter a check-in and "
+				+ "check-out date. Then choose your room type.<br><br></html>");
+		c.insets = new Insets(0, 10, 0, 10); 
+		c.gridwidth = 5;
+		panel.add(instructions, c);
+		
+		JLabel checkIn = new JLabel("Check-in:");
+		c.weightx = 1;
+		c.gridwidth = 1;
+		c.gridx = 0;
+		c.gridy = 1;
+		panel.add(checkIn, c);
+		
+		final JTextField checkInTextField = new JTextField();
+		c.gridx = 0;
+		c.gridy = 2;
+		panel.add(checkInTextField, c);
+		
+		JLabel checkOut = new JLabel("Check-out:");
+		c.gridx = 1;
+		c.gridy = 1;
+		panel.add(checkOut, c);
+		
+		final JTextField checkOutTextField = new JTextField();
+		c.gridx = 1;
+		c.gridy = 2;
+		panel.add(checkOutTextField, c);
+		
+		JLabel room = new JLabel("Room type:");
+		c.gridx = 0;
+		c.gridy = 3;
+		panel.add(room, c);
+
+		JButton backButton = new JButton("$200");
+		backButton.addActionListener(new 
+				ActionListener()
+				{
+					@Override
+					public void actionPerformed(ActionEvent e)
+					{
+
+					}
+				});
+		c.gridx = 1;
+		c.gridy = 3;
+		panel.add(backButton, c);
+		
+		JButton submitButton = new JButton("$100");
+		submitButton.addActionListener(new 
+				ActionListener()
+				{
+					public void actionPerformed(ActionEvent e)
+					{
+						database.getCurrentUser();
+					}
+				});
+		
+		c.gridx = 2;
+		c.gridy = 3;
+		panel.add(submitButton, c);
+		
+		cards.add(panel, "Make Reservation");
 	}
 }
