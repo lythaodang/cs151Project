@@ -58,7 +58,7 @@ public class Viewer
 		addCalendarPanel();
 		
 		frame.add(cards);
-		frame.setSize(400, 400);
+		frame.setSize(600, 600);
 		frame.setLocationRelativeTo(null);
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // change for load/save functionality
@@ -386,10 +386,6 @@ public class Viewer
 		c.insets = new Insets(10, 10, 10, 10); 
 		panel.add(name, c);
 		
-		// two drop down one for month one for year
-		// a calendar (probably buttons for each day? grid layout?)
-		// room info
-		
 		JButton backButton = new JButton("Sign out");
 		backButton.addActionListener(new 
 				ActionListener()
@@ -609,7 +605,7 @@ public class Viewer
 	
 	public void addCalendarPanel()
 	{
-		cards.add(new ManagerCalendar(), "Calendar");
+		cards.add(new ManagerViewPanel(), "Calendar");
 	}
 	
 	/**
