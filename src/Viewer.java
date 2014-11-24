@@ -31,7 +31,7 @@ import javax.swing.event.DocumentListener;
  * The view. Contains the frame and all panels. 
  * Viewer and controller of MVC pattern.
  */
-public class Viewer 
+public class Viewer
 {
 	private DatabaseModel database;
 	private Controller controller;
@@ -55,6 +55,7 @@ public class Viewer
 		addGuestMenu();
 		addManagerPanel();
 		addReservationPanel();
+		addCalendarPanel();
 		
 		frame.add(cards);
 		frame.setSize(400, 400);
@@ -403,7 +404,15 @@ public class Viewer
 		panel.add(backButton, c);
 		
 		JButton view = new JButton("View");
-		view.addActionListener(new SwitchListener("View"));
+		view.addActionListener(new 
+				ActionListener()
+				{
+					@Override
+					public void actionPerformed(ActionEvent e)
+					{
+						cardLayout.show(cards, "Calendar");
+					}
+				});
 		c.gridwidth = 2;
 		c.gridx = 0;
 		c.gridy = 1;
@@ -596,6 +605,11 @@ public class Viewer
 		panel.add(availableRooms, c);
 		
 		cards.add(panel, "Make Reservation");
+	}
+	
+	public void addCalendarPanel()
+	{
+		cards.add(new ManagerCalendar(), "Calendar");
 	}
 	
 	/**
