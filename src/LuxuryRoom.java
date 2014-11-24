@@ -29,17 +29,4 @@ public class LuxuryRoom implements Room, Serializable
 	{
 		return COST;
 	}
-	
-	@Override
-	public boolean isReserved() 
-	{
-		return false;
-	}
-	
-	@Override
-	public Account reservedBy(Account account) 
-	{
-		return null;
-	}
-
 }

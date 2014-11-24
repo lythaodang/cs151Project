@@ -5,6 +5,8 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.Serializable;
+import java.util.GregorianCalendar;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -14,6 +16,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 /**
  * COPYRIGHT (C) 2014 InfiniteLoops. All Rights Reserved.
@@ -27,7 +31,7 @@ import javax.swing.event.ChangeListener;
  * The view. Contains the frame and all panels. 
  * Viewer and controller of MVC pattern.
  */
-public class Viewer
+public class Viewer 
 {
 	private DatabaseModel database;
 	private Controller controller;
@@ -38,7 +42,7 @@ public class Viewer
 	/**
 	 * Constructs the frame and adds panels to CardLayout.
 	 */
-	public Viewer(final DatabaseModel database)
+	public Viewer(final DatabaseModel database) 
 	{
 		this.database = database;
 		database.deserialize();
@@ -417,8 +421,7 @@ public class Viewer
 						database.deserialize();
 						JOptionPane.showMessageDialog(new JFrame(), loaded);
 					}
-				}
-				);
+				});
 		c.gridy = 2;
 		panel.add(load, c);
 		
@@ -446,66 +449,170 @@ public class Viewer
 		c.fill = GridBagConstraints.BOTH;
 		
 		JLabel instructions = new JLabel("<html>Please enter a check-in and "
-				+ "check-out date. Then choose your room type.<br><br></html>");
-		c.insets = new Insets(0, 10, 0, 10); 
-		c.gridwidth = 5;
+				+ "check-out date. Then choose your room type.<br> "
+				+ "Note: Dates must be in correct format (MM/DD/YYYY).</html>");
+		c.insets = new Insets(10, 10, 10, 10); 
+		c.gridwidth = 2;
 		panel.add(instructions, c);
 		
-		JLabel checkIn = new JLabel("Check-in:");
+		JLabel checkInButton = new JLabel("Check-in:");
 		c.weightx = 1;
+		c.weighty = 1;
 		c.gridwidth = 1;
 		c.gridx = 0;
 		c.gridy = 1;
-		panel.add(checkIn, c);
+		panel.add(checkInButton, c);
 		
 		final JTextField checkInTextField = new JTextField();
+		checkInTextField.setText("MM/DD/YYYY");
+		checkInTextField.getDocument().addDocumentListener(
+				new DocumentListener() 
+				{
+					@Override
+					public void changedUpdate(DocumentEvent e) 
+					{
+						database.setCurrCheckIn(stringToDate(checkInTextField.getText()));
+						if (database.getCurrCheckOut() != null)
+						{
+							if (database.getCurrCheckOut().before(database.getCurrCheckIn()))
+								JOptionPane.showMessageDialog(new JFrame(), 
+										"Check-out is before check-in", 
+										"Error", JOptionPane.ERROR_MESSAGE);
+							// check number of days between checkin and checkout
+						}
+					}
+					@Override
+					public void insertUpdate(DocumentEvent e)
+					{
+						return;
+					}
+					@Override
+					public void removeUpdate(DocumentEvent e)
+					{
+						return;
+					}
+			  });
+			  
 		c.gridx = 0;
 		c.gridy = 2;
 		panel.add(checkInTextField, c);
 		
-		JLabel checkOut = new JLabel("Check-out:");
+		JLabel checkOutButton = new JLabel("Check-out:");
 		c.gridx = 1;
 		c.gridy = 1;
-		panel.add(checkOut, c);
+		panel.add(checkOutButton, c);
 		
 		final JTextField checkOutTextField = new JTextField();
+		checkOutTextField.setText("MM/DD/YYYY");
 		c.gridx = 1;
 		c.gridy = 2;
 		panel.add(checkOutTextField, c);
+		checkOutTextField.getDocument().addDocumentListener(
+				new DocumentListener() 
+				{
+					@Override
+					public void changedUpdate(DocumentEvent e) 
+					{
+						database.setCurrCheckOut(stringToDate(checkOutTextField.getText()));
+						if (database.getCurrCheckIn() != null)
+						{
+							if (database.getCurrCheckOut().before(database.getCurrCheckIn()))
+								JOptionPane.showMessageDialog(new JFrame(), 
+										"Check-out is before check-in", 
+										"Error", JOptionPane.ERROR_MESSAGE);
+							// check number of days between checkin and checkout
+						}
+					}
+					@Override
+					public void insertUpdate(DocumentEvent e)
+					{
+						return;
+					}
+					@Override
+					public void removeUpdate(DocumentEvent e)
+					{
+						return;
+					}
+			  });
 		
+		JPanel roomTypePanel = new JPanel(new GridLayout(1, 3, 10, 0));
 		JLabel room = new JLabel("Room type:");
 		c.gridx = 0;
 		c.gridy = 3;
-		panel.add(room, c);
-
-		JButton backButton = new JButton("$200");
-		backButton.addActionListener(new 
+		c.gridwidth = 2;
+		roomTypePanel.add(room);
+		
+		JButton luxuryRoom = new JButton("$200");
+		luxuryRoom.addActionListener(new 
 				ActionListener()
 				{
 					@Override
 					public void actionPerformed(ActionEvent e)
 					{
-
+						
 					}
 				});
-		c.gridx = 1;
-		c.gridy = 3;
-		panel.add(backButton, c);
+		roomTypePanel.add(luxuryRoom);
 		
-		JButton submitButton = new JButton("$100");
-		submitButton.addActionListener(new 
+		JButton normalRoom = new JButton("$80");
+		normalRoom.addActionListener(new 
 				ActionListener()
 				{
 					public void actionPerformed(ActionEvent e)
 					{
-						database.getCurrentUser();
+						
 					}
 				});
+		roomTypePanel.add(normalRoom);
 		
-		c.gridx = 2;
-		c.gridy = 3;
-		panel.add(submitButton, c);
+		panel.add(roomTypePanel, c);
+		
+		JPanel availableRooms = new JPanel();
+		
+		JLabel availableLabel = new JLabel("Available Rooms");
+		// add label and buttons to panel
+		
+		// get rooms from database
+		// if not valid show "Fix the error"
+		ChangeListener listener = new
+				ChangeListener()
+				{
+					@Override
+					public void stateChanged(ChangeEvent event)
+					{
+						for (Room r : database.getAvailRooms())
+						{
+							// add a button of each room avail to panel
+						}
+					}
+				};
+				
+		database.addChangeListener(listener);
+		
+		c.gridx = 0;
+		c.gridy = 4;
+		c.gridwidth = 2;
+		c.gridheight = 2;
+		panel.add(availableRooms, c);
 		
 		cards.add(panel, "Make Reservation");
+	}
+	
+	/**
+	 * Converts the user's input into a GregorianCalendar for use in printing
+	 * the month and events.
+	 * @param input the user's string input in the form of MM/DD/YYYY
+	 * @return a GregorianCalendar with the user's inputed date
+	 */
+	public final GregorianCalendar stringToDate(String input)
+	{
+		// check validity
+		
+		GregorianCalendar temp = new GregorianCalendar
+				(Integer.parseInt(input.substring(6, 10)),
+						Integer.parseInt(input.substring(0, 2)) - 1, 
+						Integer.parseInt(input.substring(3, 5)));
+
+		return temp;
 	}
 }

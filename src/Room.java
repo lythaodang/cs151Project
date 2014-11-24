@@ -19,17 +19,4 @@ public interface Room
 	 * @return the cost
 	 */
 	double getCost();
-	
-	/**
-	 * Checks if room is reserved
-	 * @return boolean if room is reserved or not
-	 */
-	boolean isReserved();
-	
-	/**
-	 * Gets who is reserving the room
-	 * @param account the account
-	 * @return the account
-	 */
-	Account reservedBy(Account account);
 }

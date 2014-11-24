@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
+import java.util.TreeMap;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -25,7 +27,11 @@ public class DatabaseModel
 	private Account currentUser;
 	private ArrayList<Room> rooms;
 	private ArrayList<Account> accounts;
+	private TreeMap<Room, ArrayList<Reservation>> reservations;
 	private ArrayList<ChangeListener> listeners;
+	private int currSelectedCost;
+	private GregorianCalendar currCheckIn;
+	private GregorianCalendar currCheckOut;
 	
 	/**
 	 * Constructs the database. Loads the 
@@ -36,7 +42,58 @@ public class DatabaseModel
 		rooms = new ArrayList<>();
 		accounts = new ArrayList<>();
 		listeners = new ArrayList<>();
+		currCheckIn = null;
+		currCheckOut = null;
 	}
+
+	/**
+	 * @return the currSelectedCost
+	 */
+	public int getCurrSelectedCost()
+	{
+		return currSelectedCost;
+	}
+
+	/**
+	 * @param currSelectedCost the currSelectedCost to set
+	 */
+	public void setCurrSelectedCost(int currSelectedCost)
+	{
+		this.currSelectedCost = currSelectedCost;
+	}
+
+	/**
+	 * @return the currCheckIn
+	 */
+	public GregorianCalendar getCurrCheckIn()
+	{
+		return currCheckIn;
+	}
+
+	/**
+	 * @param currCheckIn the currCheckIn to set
+	 */
+	public void setCurrCheckIn(GregorianCalendar currCheckIn)
+	{
+		this.currCheckIn = currCheckIn;
+	}
+
+	/**
+	 * @return the currCheckOut
+	 */
+	public GregorianCalendar getCurrCheckOut()
+	{
+		return currCheckOut;
+	}
+
+	/**
+	 * @param currCheckOut the currCheckOut to set
+	 */
+	public void setCurrCheckOut(GregorianCalendar currCheckOut)
+	{
+		this.currCheckOut = currCheckOut;
+	}
+
 
 	/**
 	 * The current user. It will be null if the manager is the current user.
@@ -105,6 +162,36 @@ public class DatabaseModel
 		return rooms;
 	}
 
+	/**
+	 * Returns the available rooms with the given requirements.
+	 */
+	public ArrayList<Room> getAvailRooms()
+	{
+		ArrayList<Room> availableRooms = new ArrayList<Room>();
+		for (Room room : rooms)
+		{
+			if (room.getCost() == currSelectedCost)
+			{
+				if (!reservations.get(room).isEmpty())
+				{
+					boolean available = true;
+					for (Reservation r : reservations.get(room))
+					{
+						GregorianCalendar rStart = r.getStart();
+						GregorianCalendar rEnd = r.getEnd();
+						if (rStart.equals(currCheckIn) || rEnd.equals(currCheckOut) || 
+								(rStart.before(currCheckIn) && rEnd.after(currCheckOut)))
+							available = false;
+					}
+					
+					if (available)
+						availableRooms.add(room);
+				}
+			}
+		}
+		return availableRooms;
+	}
+	
 	/**
 	 * Adds 10 economic rooms and 10 luxury rooms to the hotel.
 	 */
