@@ -135,6 +135,13 @@ public class DatabaseModel
 			out.writeObject(accounts);
 			out.close();
 			file.close();
+			
+			file = new FileOutputStream("rooms.ser");
+			out = new ObjectOutputStream(file);
+			out.writeObject(rooms);
+			
+			out.close();
+			file.close();
 		}
 		catch(IOException io)
 	    {
@@ -151,6 +158,12 @@ public class DatabaseModel
 				FileInputStream file = new FileInputStream("accounts.ser");
 				ObjectInputStream input = new ObjectInputStream(file);
 				accounts = (ArrayList<Account>) input.readObject();
+				input.close();
+				file.close();
+				
+				file = new FileInputStream("rooms.ser");
+				input = new ObjectInputStream(file);
+				rooms = (ArrayList<Room>) input.readObject();
 				input.close();
 				file.close();
 			}

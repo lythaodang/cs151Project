@@ -1,3 +1,5 @@
+import java.io.Serializable;
+
 /**
  * COPYRIGHT 2014 InfiniteLoops. All Rights Reserved.
  * Comment goes here
@@ -6,7 +8,7 @@
  * @version 1.00 2014/10/30
  */ 
 
-public class LuxuryRoom implements Room
+public class LuxuryRoom implements Room, Serializable
 {
 	private final double COST = 200;
 	private int roomNumber;
