@@ -12,7 +12,7 @@ import javax.swing.event.ChangeListener;
 
 public class GuestMenuPanel extends JPanel
 {
-	GridBagConstraints c;
+	private GridBagConstraints c;
 	private final DatabaseModel model;
 	private ViewManager manager;
 	

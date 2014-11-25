@@ -1,5 +1,6 @@
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,9 +12,12 @@ import java.util.GregorianCalendar;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
@@ -22,29 +26,36 @@ import javax.swing.event.DocumentListener;
 
 public class MakeReservationPanel extends JPanel
 {
-	GridBagConstraints c;
+	private GridBagConstraints c;
+	private final GregorianCalendar today;
 	private final DatabaseModel model;
 	private ViewManager manager;
-	private JButton selectedCost;
 	
 	public MakeReservationPanel(final ViewManager manager)
 	{
 		this.manager = manager;
 		model = manager.getModel();
-		selectedCost = null;
+		today = new GregorianCalendar();
+		today.clear(Calendar.HOUR);
+		today.clear(Calendar.MINUTE);
+		today.clear(Calendar.SECOND);
+		today.clear(Calendar.MILLISECOND);
 		
 		this.setLayout(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
+		c = new GridBagConstraints();
+		c.insets = new Insets(10, 10, 10, 10); 
 		c.fill = GridBagConstraints.BOTH;
+		
+		addInstructions();
+		addControllers();
 	}
 		
 		
-	public void addInstructions()
+	private void addInstructions()
 	{
 		JLabel instructions = new JLabel("<html>Please enter a check-in and "
 				+ "check-out date. Then choose your room type.<br> "
 				+ "Note: Dates must be in correct format (MM/DD/YYYY).</html>");
-		c.insets = new Insets(10, 10, 10, 10); 
 		c.gridwidth = 2;
 		this.add(instructions, c);
 		
@@ -80,34 +91,65 @@ public class MakeReservationPanel extends JPanel
 					@Override
 					public void changedUpdate(DocumentEvent e) 
 					{
-						if(checkIn.getText().length() == 10 && checkIn.getText()checkIn.getText().length() == 10
-								&& selectedCost != null)
-						{
-							if (isValidDate(checkIn.getText()) && isValidDate(checkOut.getText()))
-							{
-								GregorianCalendar start = stringToDate(checkIn.getText());
-								GregorianCalendar end = stringToDate(checkOut.getText());
-								if (!start.before(end))
-									JOptionPane.showMessageDialog(new JFrame(), 
-											"Error: Check-out is before check-in", 
-											"Error", JOptionPane.ERROR_MESSAGE);
-								else if (checkDaysBetween(start, end) > 60)
-									JOptionPane.showMessageDialog(new JFrame(), 
-											"Error: Stay is too long.", 
-											"Error", JOptionPane.ERROR_MESSAGE);
-								else if ()
-									
-							}
+						return;
 					}
 					@Override
 					public void insertUpdate(DocumentEvent e)
 					{
-						return;
+						if (checkIn.getText().length() == 10)
+						{
+							if (isValidDate(checkIn.getText()))
+							{
+								GregorianCalendar date = stringToDate(checkIn.getText());
+								if (date.equals(today) || date.before(today))
+								{
+									JOptionPane.showMessageDialog(new JFrame(), 
+											"Error: Entered date is prior to today or is today.", 
+											"Error", JOptionPane.ERROR_MESSAGE);
+									model.setCurrCheckIn(null);
+								}
+								else
+									model.setCurrCheckIn(date);
+							}
+							else
+							{
+								JOptionPane.showMessageDialog(new JFrame(), 
+										"Error: Invalid format.", 
+										"Error", JOptionPane.ERROR_MESSAGE);
+								model.setCurrCheckIn(null);
+							}
+						}
+						else
+							model.setCurrCheckIn(null);
 					}
 					@Override
 					public void removeUpdate(DocumentEvent e)
 					{
-						return;
+						if (checkIn.getText().length() == 10)
+						{
+							if (isValidDate(checkIn.getText()))
+							{
+								GregorianCalendar date = stringToDate(checkIn.getText());
+								if (date.equals(today) || date.before(today))
+								{
+									JOptionPane.showMessageDialog(new JFrame(), 
+											"Error: Entered date is prior to today or is today.", 
+											"Error", JOptionPane.ERROR_MESSAGE);
+									model.setCurrCheckIn(null);
+								}
+								else
+									model.setCurrCheckIn(date);
+							}
+							else
+							{
+								JOptionPane.showMessageDialog(new JFrame(), 
+										"Error: Invalid format.", 
+										"Error", JOptionPane.ERROR_MESSAGE);
+								model.setCurrCheckIn(null);
+							}
+						}
+						else
+							model.setCurrCheckIn(null);
 					}
 			  });
 		
@@ -117,26 +159,65 @@ public class MakeReservationPanel extends JPanel
 					@Override
 					public void changedUpdate(DocumentEvent e) 
 					{
-						if (isValidDate(checkOutTextField.getText()))
-						database.setCurrCheckOut(stringToDate(checkOutTextField.getText()));
-						if (database.getCurrCheckIn() != null)
-						{
-							if (database.getCurrCheckOut().before(database.getCurrCheckIn()))
-								JOptionPane.showMessageDialog(new JFrame(), 
-										"Check-out is before check-in", 
-										"Error", JOptionPane.ERROR_MESSAGE);
-							// check number of days between checkin and checkout
-						}
+						return;
 					}
 					@Override
 					public void insertUpdate(DocumentEvent e)
 					{
-						return;
+						if (checkOut.getText().length() == 10)
+						{
+							if (isValidDate(checkOut.getText()))
+							{
+								GregorianCalendar date = stringToDate(checkOut.getText());
+								if (date.equals(today) || date.before(today))
+								{
+									JOptionPane.showMessageDialog(new JFrame(), 
+											"Error: Entered date is prior to today or is today.", 
+											"Error", JOptionPane.ERROR_MESSAGE);
+									model.setCurrCheckOut(null);
+								}
+								else
+									model.setCurrCheckOut(date);
+							}
+							else
+							{
+								JOptionPane.showMessageDialog(new JFrame(), 
+										"Error: Invalid format.", 
+										"Error", JOptionPane.ERROR_MESSAGE);
+								model.setCurrCheckOut(null);
+							}
+						}
+						else
+							model.setCurrCheckOut(null);
 					}
 					@Override
 					public void removeUpdate(DocumentEvent e)
 					{
-						return;
+						if (checkOut.getText().length() == 10)
+						{
+							if (isValidDate(checkOut.getText()))
+							{
+								GregorianCalendar date = stringToDate(checkOut.getText());
+								if (date.equals(today) || date.before(today))
+								{
+									JOptionPane.showMessageDialog(new JFrame(), 
+											"Error: Entered date is prior to today or is today.", 
+											"Error", JOptionPane.ERROR_MESSAGE);
+									model.setCurrCheckOut(null);
+								}
+								else
+									model.setCurrCheckOut(date);
+							}
+							else
+							{
+								JOptionPane.showMessageDialog(new JFrame(), 
+										"Error: Invalid format.", 
+										"Error", JOptionPane.ERROR_MESSAGE);
+								model.setCurrCheckOut(null);
+							}
+						}
+						else
+							model.setCurrCheckOut(null);
 					}
 			  });
 		
@@ -147,58 +228,61 @@ public class MakeReservationPanel extends JPanel
 		c.gridwidth = 2;
 		roomTypePanel.add(room);
 		
-		JButton luxuryRoom = new JButton("$200");
+		final JButton luxuryRoom = new JButton("$200");
 		luxuryRoom.addActionListener(new 
 				ActionListener()
 				{
 					@Override
 					public void actionPerformed(ActionEvent e)
 					{
-						
+						model.setCurrSelectedCost(200);
 					}
 				});
 		roomTypePanel.add(luxuryRoom);
 		
-		JButton normalRoom = new JButton("$80");
+		final JButton normalRoom = new JButton("$80");
 		normalRoom.addActionListener(new 
 				ActionListener()
 				{
 					public void actionPerformed(ActionEvent e)
 					{
-						
+						model.setCurrSelectedCost(80);
 					}
 				});
 		roomTypePanel.add(normalRoom);
 		
-		panel.add(roomTypePanel, c);
+		this.add(roomTypePanel, c);
 		
-		JPanel availableRooms = new JPanel();
+		JPanel availableRooms = new JPanel(new GridLayout(2, 1));
 		
-		JLabel availableLabel = new JLabel("Available Rooms");
-		// add label and buttons to panel
+		final JLabel availableLabel = new JLabel(model.getValidityOfInput());
+		availableRooms.add(availableLabel);
+		final JList list = new JList(model.getAvailRooms().toArray());
+		list.setVisibleRowCount(20);
+		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		list.setLayoutOrientation(JList.VERTICAL);
+		list.setVisibleRowCount(-1);
+		JScrollPane listScroller = new JScrollPane(list);
+		availableRooms.add(listScroller);
 		
-		// get rooms from database
-		// if not valid show "Fix the error"
 		ChangeListener listener = new
 				ChangeListener()
 				{
 					@Override
 					public void stateChanged(ChangeEvent event)
 					{
-						for (Room r : database.getAvailRooms())
-						{
-							// add a button of each room avail to panel
-						}
+						availableLabel.setText(model.getValidityOfInput());
+						list.setListData(model.getAvailRooms().toArray());
 					}
 				};
 				
-		database.addChangeListener(listener);
+		model.addChangeListener(listener);
 		
 		c.gridx = 0;
 		c.gridy = 4;
 		c.gridwidth = 2;
 		c.gridheight = 2;
-		panel.add(availableRooms, c);
+		this.add(availableRooms, c);
 	}
 	
 	private boolean isValidDate(String input) 

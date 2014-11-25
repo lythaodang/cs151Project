@@ -4,9 +4,12 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TreeMap;
 
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -42,8 +45,10 @@ public class DatabaseModel
 		rooms = new ArrayList<>();
 		accounts = new ArrayList<>();
 		listeners = new ArrayList<>();
+		currSelectedCost = 0;
 		currCheckIn = null;
 		currCheckOut = null;
+		initializeRooms();
 	}
 
 	/**
@@ -72,7 +77,7 @@ public class DatabaseModel
 		this.currCheckOut = currCheckOut;
 		update();
 	}
-
+	
 	/**
 	 * The current user. It will be null if the manager is the current user.
 	 * @return the currentUser
@@ -139,33 +144,71 @@ public class DatabaseModel
 	}
 
 	/**
-	 * Returns the available rooms with the given requirements.
+	 * Checks to see if inputed data is valid. If it is not, this method will
+	 * return an error to the make a reservation panel. If it is valid,
+	 * "Available Rooms" will be displays.
 	 */
+	public String getValidityOfInput()
+	{
+		String result = "";
+		
+		if (currCheckIn != null && currCheckOut != null && currSelectedCost != 0)
+		{
+			if (!currCheckIn.before(currCheckOut))
+				result = "Error: Check-out date is before check-in date.";
+			else if (checkDaysBetween(currCheckIn, currCheckOut) > 60)
+				result = "Error: Stay is too long.";
+			else if (getAvailRooms().isEmpty())
+				result = "No Available Rooms";
+			else
+				result = "Available Rooms";
+		}
+		else
+			result = "Error: Missing input.";
+		return result;
+	}
+	
 	public ArrayList<Room> getAvailRooms()
 	{
 		ArrayList<Room> availableRooms = new ArrayList<Room>();
-		for (Room room : rooms)
-		{
-			if (room.getCost() == currSelectedCost)
+		
+		if (currCheckIn != null && currCheckOut != null && currSelectedCost != 0
+				&& currCheckIn.before(currCheckOut) && 
+				checkDaysBetween(currCheckIn, currCheckOut) <= 60)
+			for (Room room : rooms)
 			{
-				if (!reservations.get(room).isEmpty())
+				if (room.getCost() == currSelectedCost)
 				{
-					boolean available = true;
-					for (Reservation r : reservations.get(room))
+					if (!reservations.get(room).isEmpty())
 					{
-						GregorianCalendar rStart = r.getStart();
-						GregorianCalendar rEnd = r.getEnd();
-						if (rStart.equals(currCheckIn) || rEnd.equals(currCheckOut) || 
-								(rStart.before(currCheckIn) && rEnd.after(currCheckOut)))
-							available = false;
+						boolean available = true;
+						for (Reservation r : reservations.get(room))
+						{
+							GregorianCalendar rStart = r.getStart();
+							GregorianCalendar rEnd = r.getEnd();
+							if (rStart.equals(currCheckIn) || rEnd.equals(currCheckOut) || 
+									(rStart.before(currCheckIn) && rEnd.after(currCheckOut)))
+								available = false;
+						}
+
+						if (available)
+							availableRooms.add(room);
 					}
-					
-					if (available)
-						availableRooms.add(room);
 				}
 			}
-		}
+		
 		return availableRooms;
+	}
+	
+	private int checkDaysBetween(GregorianCalendar start, GregorianCalendar end)
+	{
+		int count = 0;
+		while (!start.equals(end))
+		{
+			start.add(Calendar.DATE, 1);
+			count++;
+		}
+		return count;
 	}
 	
 	/**
