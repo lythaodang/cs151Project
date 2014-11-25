@@ -6,7 +6,6 @@ import java.awt.Insets;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -31,9 +30,13 @@ public class ManagerViewPanel extends JPanel
 
 	private GregorianCalendar current;
 	private GridBagConstraints c;
+	private final DatabaseModel model;
+	private ViewManager manager;
 
-	public ManagerViewPanel()
+	public ManagerViewPanel(final ViewManager manager)
 	{
+		this.manager = manager;
+		model = manager.getModel();
 		current = new GregorianCalendar();
 		
 		this.setLayout(new GridBagLayout());

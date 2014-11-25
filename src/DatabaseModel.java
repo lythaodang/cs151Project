@@ -47,43 +47,21 @@ public class DatabaseModel
 	}
 
 	/**
-	 * @return the currSelectedCost
-	 */
-	public int getCurrSelectedCost()
-	{
-		return currSelectedCost;
-	}
-
-	/**
 	 * @param currSelectedCost the currSelectedCost to set
 	 */
 	public void setCurrSelectedCost(int currSelectedCost)
 	{
 		this.currSelectedCost = currSelectedCost;
+		update();
 	}
-
-	/**
-	 * @return the currCheckIn
-	 */
-	public GregorianCalendar getCurrCheckIn()
-	{
-		return currCheckIn;
-	}
-
+	
 	/**
 	 * @param currCheckIn the currCheckIn to set
 	 */
 	public void setCurrCheckIn(GregorianCalendar currCheckIn)
 	{
 		this.currCheckIn = currCheckIn;
-	}
-
-	/**
-	 * @return the currCheckOut
-	 */
-	public GregorianCalendar getCurrCheckOut()
-	{
-		return currCheckOut;
+		update();
 	}
 
 	/**
@@ -92,8 +70,8 @@ public class DatabaseModel
 	public void setCurrCheckOut(GregorianCalendar currCheckOut)
 	{
 		this.currCheckOut = currCheckOut;
+		update();
 	}
-
 
 	/**
 	 * The current user. It will be null if the manager is the current user.
@@ -111,10 +89,7 @@ public class DatabaseModel
 	public void setCurrentUser(Account currentUser)
 	{
 		this.currentUser = currentUser;
-		
-		ChangeEvent event = new ChangeEvent(this);
-		for (ChangeListener listener : listeners)
-			listener.stateChanged(event);
+		update();
 	}
 	
 	/**
@@ -151,6 +126,7 @@ public class DatabaseModel
 	public void addAccount(Account account)
 	{
 		accounts.add(account);
+		update();
 	}
 	
 	/**
@@ -195,7 +171,7 @@ public class DatabaseModel
 	/**
 	 * Adds 10 economic rooms and 10 luxury rooms to the hotel.
 	 */
-	public void initializeRooms()
+	private void initializeRooms()
 	{
 		int i;
 		for (i = 1; i <= 10; i++)
@@ -211,6 +187,16 @@ public class DatabaseModel
 	public void addChangeListener(ChangeListener listener)
 	{
 		listeners.add(listener);
+	}
+	
+	/**
+	 * Updates the listeners that there has been a change.
+	 */
+	private void update()
+	{
+		ChangeEvent event = new ChangeEvent(this);
+		for (ChangeListener listener : listeners)
+			listener.stateChanged(event);
 	}
 	
 	public void serialize() 
