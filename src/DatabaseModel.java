@@ -3,6 +3,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -148,22 +149,52 @@ public class DatabaseModel
 	 */
 	public String getValidityOfInput()
 	{
-		String result = "";
+		String result = "<html> Results for: <br>Check-in: ";
+
+		if (currCheckIn != null)
+			result = result + new SimpleDateFormat("MM/dd/yyyy").
+				format(currCheckIn.getTime());
+		else
+			result = result + "null";
+
+		result = result + "<br>Check-out: "; 
+
+		if (currCheckOut != null)
+			result = result + new SimpleDateFormat("MM/dd/yyyy").
+				format(currCheckOut.getTime());
+		else
+			result = result + "null";
+
+		result = result + "<br>Cost: ";
+		if (currSelectedCost != 0)
+			result = result + currSelectedCost + "<br>";
+		else
+			result = result + "null<br>";
 		
-		if (currCheckIn != null && currCheckOut != null && currSelectedCost != 0)
+		if (currCheckIn != null && currCheckOut != null)
 		{
-			if (!currCheckIn.before(currCheckOut))
-				result = "Error: Check-out date is before check-in date.";
-			else if (checkDaysBetween(currCheckIn, currCheckOut) > 60)
-				result = "Error: Stay is too long.";
-			else if (getAvailRooms().isEmpty())
-				result = "No Available Rooms";
+			if (currCheckIn.before(currCheckOut))
+			{
+				if (checkDaysBetween(currCheckIn, currCheckOut) > 60)
+					result = result + "Error: Stay is too long.<br>";
+			}
 			else
-				result = "Available Rooms";
+				result = result + "Error: Check-out date is before check-in date.<br>";
+			
+			if (currSelectedCost != 0)
+			{
+				if (getAvailRooms().isEmpty())
+					result = result + "No Available Rooms<br>";
+				else
+					result = result + "Available Rooms<br>";
+			}
+			else
+				result = result + "Error: Missing input.<br>";
 		}
 		else
-			result = "Error: Missing input.";
-		return result;
+			result = result + "Error: Missing input.<br>";
+		
+		return result + "</html>";
 	}
 	
 	public ArrayList<Room> getAvailRooms()
