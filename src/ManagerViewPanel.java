@@ -3,6 +3,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -36,7 +38,7 @@ public class ManagerViewPanel extends JPanel
 	public ManagerViewPanel(final ViewManager manager)
 	{
 		this.manager = manager;
-		model = manager.getModel();
+		this.model = manager.getModel();
 		current = new GregorianCalendar();
 		
 		this.setLayout(new GridBagLayout());
@@ -53,10 +55,21 @@ public class ManagerViewPanel extends JPanel
 	public void addDropDown()
 	{
 		JPanel dropDownPanel = new JPanel(new GridLayout(1, 2, 10, 10));
-		JComboBox<Object> months = new JComboBox<Object>(monthList);
+		final JComboBox<Object> months = new JComboBox<Object>(monthList);
 		months.setSelectedItem(monthList[current.get(Calendar.MONTH)]);
 		months.setBackground(Color.white);
 		((JLabel)months.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
+		
+		months.addActionListener(new
+					ActionListener()
+					{
+						public void actionPerformed(ActionEvent e)
+						{
+						    current.set(GregorianCalendar.MONTH,
+						    		months.getSelectedIndex() + 1);
+						    addCalendar();
+						}
+					});
 		
 		SpinnerModel spinnerModel = new SpinnerNumberModel(
 				current.get(Calendar.YEAR), 
@@ -149,6 +162,15 @@ public class ManagerViewPanel extends JPanel
 	public void addBackButton()
 	{
 		JButton back = new JButton("Back");
+		back.addActionListener(new 
+				ActionListener()
+				{
+					@Override
+					public void actionPerformed(ActionEvent e)
+					{
+						manager.switchPanel("Manager");
+					}
+				});
 		c.gridx = 0;
 		c.gridy = 2;
 		c.gridwidth = 2;

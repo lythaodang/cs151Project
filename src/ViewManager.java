@@ -1,22 +1,11 @@
 import java.awt.CardLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.GregorianCalendar;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
 /**
  * COPYRIGHT (C) 2014 InfiniteLoops. All Rights Reserved.
@@ -55,9 +44,10 @@ public class ViewManager
 		cards.add(new ManagerViewPanel(this), "Calendar");
 		cards.add(new ManagerMenuPanel(this), "Manager");
 		cards.add(new MakeReservationPanel(this), "Make a Reservation");
+		cards.add(new AvailablePanel(this), "Available Rooms");
 		
 		frame.add(cards);
-		frame.setSize(550, 500);
+		frame.setSize(850, 600);
 		frame.setLocationRelativeTo(null);
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // change for load/save functionality

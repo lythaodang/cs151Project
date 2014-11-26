@@ -236,6 +236,7 @@ public class MakeReservationPanel extends JPanel
 					public void actionPerformed(ActionEvent e)
 					{
 						model.setCurrSelectedCost(200);
+						manager.switchPanel("Available Rooms");
 					}
 				});
 		roomTypePanel.add(luxuryRoom);
@@ -247,6 +248,7 @@ public class MakeReservationPanel extends JPanel
 					public void actionPerformed(ActionEvent e)
 					{
 						model.setCurrSelectedCost(80);
+						manager.switchPanel("Available Rooms");
 					}
 				});
 		roomTypePanel.add(normalRoom);
