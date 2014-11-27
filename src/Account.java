@@ -89,4 +89,14 @@ public class Account implements Serializable
 	{
 		return reservations;
 	}
+	
+	public void addReservation(Reservation r)
+	{
+		reservations.add(r);
+	}
+	
+	public void cancelReservation(Reservation r)
+	{
+		reservations.remove(r);
+	}
 }

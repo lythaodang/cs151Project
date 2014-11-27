@@ -28,7 +28,6 @@ import javax.swing.event.ListSelectionListener;
 public class MakeReservationPanel extends JPanel
 {
 	private GridBagConstraints c;
-	private final GregorianCalendar today;
 	private final DatabaseModel model;
 	private ViewManager manager;
 	
@@ -36,11 +35,6 @@ public class MakeReservationPanel extends JPanel
 	{
 		this.manager = manager;
 		model = manager.getModel();
-		today = new GregorianCalendar();
-		today.clear(Calendar.HOUR);
-		today.clear(Calendar.MINUTE);
-		today.clear(Calendar.SECOND);
-		today.clear(Calendar.MILLISECOND);
 		
 		this.setLayout(new GridBagLayout());
 		c = new GridBagConstraints();
@@ -199,7 +193,7 @@ public class MakeReservationPanel extends JPanel
 				if (isValidDate(tf.getText()))
 				{
 					GregorianCalendar date = stringToDate(tf.getText());
-					if (date.equals(today) || date.before(today))
+					if (date.equals(DatabaseModel.TODAY) || date.before(DatabaseModel.TODAY))
 					{
 						JOptionPane.showMessageDialog(new JFrame(), 
 								"Error: Entered date is prior to today or is today.", 
@@ -271,7 +265,7 @@ public class MakeReservationPanel extends JPanel
 					}
 				});
 		
-		ChangeListener listener = new
+		model.addChangeListener(new
 				ChangeListener()
 				{
 					@Override
@@ -280,9 +274,7 @@ public class MakeReservationPanel extends JPanel
 						availableLabel.setText(model.getValidityOfInput());
 						list.setListData(model.getAvailRooms().toArray());
 					}
-				};
-				
-		model.addChangeListener(listener);
+				});
 	}
 	
 	private boolean isValidDate(String input) 

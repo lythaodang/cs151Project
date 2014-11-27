@@ -32,6 +32,7 @@ public class DatabaseModel
 	private ArrayList<Account> accounts;
 	private TreeMap<Room, ArrayList<Reservation>> reservations;
 	private ArrayList<ChangeListener> listeners;
+	public static final GregorianCalendar TODAY = new GregorianCalendar();
 	
 	// variables used for the transaction
 	private int cost;
@@ -39,7 +40,10 @@ public class DatabaseModel
 	private GregorianCalendar checkOut;
 	private Room selectedRoom;
 	private ArrayList<Reservation> transaction;
-
+	
+	// variables used for manager
+	private GregorianCalendar selectedDate;
+	
 	/**
 	 * Constructs the database. Loads the 
 	 */
@@ -63,12 +67,63 @@ public class DatabaseModel
 					}
 				});
 		listeners = new ArrayList<>();
+		TODAY.clear(Calendar.HOUR);
+		TODAY.clear(Calendar.MINUTE);
+		TODAY.clear(Calendar.SECOND);
+		TODAY.clear(Calendar.MILLISECOND);
+		
 		cost = 0;
 		checkIn = null;
 		checkOut = null;
 		selectedRoom = null;
 		transaction = new ArrayList<Reservation>();
+		
+		selectedDate = null;
+		
 		initializeRooms();
+	}
+	
+	public String getRoomInformation()
+	{
+		String result = "Room Information for " + 
+				new SimpleDateFormat("MM/dd/yyyy").format(selectedDate.getTime())
+				+ "\n";
+		
+		for (Room room : reservations.keySet())
+		{
+			result = result + "\n" + room.toString() + "\n";
+			
+			if (reservations.get(room).isEmpty())
+				result = result + "Available\n";
+			else
+				for (Reservation res : reservations.get(room))
+				{
+					if ((res.getStart().before(selectedDate) ||
+							res.getStart().equals(selectedDate)) && 
+							(res.getEnd().after(selectedDate) ||
+							res.getEnd().equals(selectedDate)))
+					{
+						result = result + "Unavailable\nReserved from: " + 
+								res.getStart() + " to " + res.getEnd() + "\n" + 
+								"Reserved by: " + res.getUserID().getFirstName().toUpperCase() +
+								" " + res.getUserID().getLastName().toUpperCase() + "(ID " +
+								res.getUserID();
+					}
+				}
+		}
+		
+		return result;
+	}
+	
+	public GregorianCalendar getSelectedDate()
+	{
+		return selectedDate;
+	}
+	
+	public void setSelectedDate(GregorianCalendar date)
+	{
+		selectedDate = date;
+		update();
 	}
 	
 	public void setSelectedRoom(Room room)
@@ -111,6 +166,7 @@ public class DatabaseModel
 	public void addReservation()
 	{
 		Reservation newReservation = new Reservation(checkIn, checkOut, currentUser);
+		currentUser.addReservation(newReservation);
 		reservations.get(selectedRoom).add(newReservation);
 		transaction.add(newReservation);
 	}

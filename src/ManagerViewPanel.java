@@ -20,6 +20,9 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.text.DefaultCaret;
 
 public class ManagerViewPanel extends JPanel
 {
@@ -30,16 +33,16 @@ public class ManagerViewPanel extends JPanel
 	private final static int DAYS_IN_A_WEEK = 7;
 	private final static int MAX_WEEKS_IN_A_MONTH = 6;
 
-	private GregorianCalendar current;
 	private GridBagConstraints c;
 	private final DatabaseModel model;
 	private ViewManager manager;
+	private JButton selectedDay;
 
 	public ManagerViewPanel(final ViewManager manager)
 	{
 		this.manager = manager;
 		this.model = manager.getModel();
-		current = new GregorianCalendar();
+		selectedDay = null;
 		
 		this.setLayout(new GridBagLayout());
 		c = new GridBagConstraints();
@@ -50,13 +53,14 @@ public class ManagerViewPanel extends JPanel
 		addCalendar();
 		addRoomInfo();
 		addBackButton();
+		model.setSelectedDate(DatabaseModel.TODAY);
 	}
 
 	public void addDropDown()
 	{
 		JPanel dropDownPanel = new JPanel(new GridLayout(1, 2, 10, 10));
 		final JComboBox<Object> months = new JComboBox<Object>(monthList);
-		months.setSelectedItem(monthList[current.get(Calendar.MONTH)]);
+		months.setSelectedItem(monthList[DatabaseModel.TODAY.get(Calendar.MONTH)]);
 		months.setBackground(Color.white);
 		((JLabel)months.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
 		
@@ -65,22 +69,33 @@ public class ManagerViewPanel extends JPanel
 					{
 						public void actionPerformed(ActionEvent e)
 						{
-						    current.set(GregorianCalendar.MONTH,
-						    		months.getSelectedIndex() + 1);
-						    addCalendar();
+							GregorianCalendar temp = model.getSelectedDate();
+							temp.set(Calendar.MONTH, months.getSelectedIndex());
+							model.setSelectedDate(temp);
 						}
 					});
 		
-		SpinnerModel spinnerModel = new SpinnerNumberModel(
-				current.get(Calendar.YEAR), 
-				current.getMinimum(GregorianCalendar.YEAR), 
-				current.getMaximum(GregorianCalendar.YEAR), 1);
+		final SpinnerModel spinnerModel = new SpinnerNumberModel(
+				DatabaseModel.TODAY.get(Calendar.YEAR), 
+				DatabaseModel.TODAY.getMinimum(GregorianCalendar.YEAR), 
+				DatabaseModel.TODAY.getMaximum(GregorianCalendar.YEAR), 1);
 		JSpinner spinner = new JSpinner(spinnerModel);
 		NumberEditor editor = new NumberEditor(spinner, "#");
 		editor.getTextField().setHorizontalAlignment(JTextField.CENTER);
 		editor.getTextField().setEditable(false);
 		editor.getComponent(0).setBackground(Color.white);
 		spinner.setEditor(editor);
+		
+		spinner.addChangeListener(new
+				ChangeListener()
+				{
+					public void stateChanged(ChangeEvent e)
+					{
+						GregorianCalendar temp = model.getSelectedDate();
+						temp.set(Calendar.YEAR, (int)spinnerModel.getValue());
+						model.setSelectedDate(temp);
+					};
+				});
 		
 		dropDownPanel.add(months);
 		dropDownPanel.add(spinner);
@@ -90,13 +105,7 @@ public class ManagerViewPanel extends JPanel
 	}
 	
 	public void addCalendar()
-	{
-		int weeksInMonth = current.getActualMaximum(Calendar.WEEK_OF_MONTH);
-		int daysInMonth = current.getActualMaximum(GregorianCalendar.DAY_OF_MONTH);
-		GregorianCalendar temp = (GregorianCalendar) current.clone();
-		temp.set(Calendar.DAY_OF_MONTH, 1);
-		int weekdayStart = temp.get(GregorianCalendar.DAY_OF_WEEK) - 1;
-		
+	{	
 		JPanel calendarPanel = new JPanel(new GridLayout(
 				MAX_WEEKS_IN_A_MONTH + 1, DAYS_IN_A_WEEK));
 		
@@ -110,33 +119,64 @@ public class ManagerViewPanel extends JPanel
 			calendarPanel.add(label);
 		}
 		
-		JButton[][] days = new JButton[weeksInMonth][DAYS_IN_A_WEEK];
+		final JButton[][] days = new JButton[MAX_WEEKS_IN_A_MONTH][DAYS_IN_A_WEEK];
 		
-		for (int i = 0; i < weeksInMonth; i++)
+		for (int i = 0; i < MAX_WEEKS_IN_A_MONTH; i++)
 			for (int j = 0; j < DAYS_IN_A_WEEK; j++)
 			{
-				JButton button = new JButton();
+				final JButton button = new JButton();
 				button.setBackground(Color.white);
 				button.setOpaque(true);
 				days[i][j] = button;
 				calendarPanel.add(days[i][j]);
+				
+				button.addActionListener(new
+					ActionListener()
+					{
+						@Override
+						public void actionPerformed(ActionEvent e)
+						{
+							selectedDay = button;
+							GregorianCalendar temp = model.getSelectedDate();
+							temp.set(Calendar.DATE, Integer.parseInt(button.getText()));
+							model.setSelectedDate(temp);
+						}
+					});
 			}
 		
-		int currDay = 1;
-		for (int i = 0; i < weeksInMonth; i++)
-			for (int j = 0; j < DAYS_IN_A_WEEK; j++)
-			{
-				if (currDay <= daysInMonth) 
+		model.addChangeListener(new 
+				ChangeListener()
 				{
-					if ((i == 0 && j >= weekdayStart) || (i != 0))
+					@Override
+					public void stateChanged(ChangeEvent event)
 					{
-						days[i][j].setText(Integer.toString(currDay));
-						currDay++;
+						final int weeksInMonth = 
+								model.getSelectedDate().getActualMaximum(Calendar.WEEK_OF_MONTH);
+						final int daysInMonth = 
+								model.getSelectedDate().getActualMaximum(GregorianCalendar.DAY_OF_MONTH);
+						GregorianCalendar temp = (GregorianCalendar) model.getSelectedDate().clone();
+						temp.set(Calendar.DAY_OF_MONTH, 1);
+						final int weekdayStart = temp.get(GregorianCalendar.DAY_OF_WEEK) - 1;
+						
+						int currDay = 1;
+						for (int i = 0; i < MAX_WEEKS_IN_A_MONTH; i++)
+							for (int j = 0; j < DAYS_IN_A_WEEK; j++)
+							{
+								if (currDay <= daysInMonth) 
+								{
+									if ((i == 0 && j >= weekdayStart) || (i != 0))
+									{
+										days[i][j].setText(Integer.toString(currDay));
+										currDay++;
+									}
+									else
+										days[i][j].setText("");
+								}
+								else
+									days[i][j].setText("");
+							}
 					}
-				}
-				else
-					break;
-			}
+				});
 		
 		c.weightx = 0;
 		c.weighty = 1;
@@ -147,16 +187,29 @@ public class ManagerViewPanel extends JPanel
 	
 	public void addRoomInfo()
 	{
-		JTextArea roomInfo = new JTextArea("Room Information");
+		final JTextArea roomInfo = new JTextArea("Room Information");
 		roomInfo.setEditable(false);
-		JScrollPane scrollPane = new JScrollPane(roomInfo,
+		final JScrollPane scrollPane = new JScrollPane(roomInfo,
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		DefaultCaret caret = (DefaultCaret) roomInfo.getCaret();
+		caret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
 		c.gridx = 1;
 		c.gridy = 0;
 		c.weightx = 1;
 		c.gridheight = 2;
 		add(scrollPane, c);
+		
+		model.addChangeListener(new
+				ChangeListener()
+				{
+					@Override
+					public void stateChanged(ChangeEvent e)
+					{
+						if (selectedDay != null)
+							roomInfo.setText(model.getRoomInformation());
+					}
+				});
 	}
 	
 	public void addBackButton()
@@ -168,6 +221,8 @@ public class ManagerViewPanel extends JPanel
 					@Override
 					public void actionPerformed(ActionEvent e)
 					{
+						model.setSelectedDate(DatabaseModel.TODAY);
+						selectedDay = null;
 						manager.switchPanel("Manager");
 					}
 				});
