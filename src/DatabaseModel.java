@@ -6,6 +6,7 @@ import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.TreeMap;
 
@@ -18,7 +19,7 @@ import javax.swing.event.ChangeListener;
  * Solves CS151 Project
  * @author Mike Phe, Ly Dang, Andrew Yobs
  * @version 1.00 2014/11/03
-*/
+ */
 
 /**
  * This is the database of the hotel. It holds rooms, accounts, and
@@ -31,10 +32,10 @@ public class DatabaseModel
 	private ArrayList<Account> accounts;
 	private TreeMap<Room, ArrayList<Reservation>> reservations;
 	private ArrayList<ChangeListener> listeners;
-	private int currSelectedCost;
-	private GregorianCalendar currCheckIn;
-	private GregorianCalendar currCheckOut;
-	
+	private int cost;
+	private GregorianCalendar checkIn;
+	private GregorianCalendar checkOut;
+
 	/**
 	 * Constructs the database. Loads the 
 	 */
@@ -43,10 +44,24 @@ public class DatabaseModel
 		currentUser = null;
 		rooms = new ArrayList<>();
 		accounts = new ArrayList<>();
+		reservations = new TreeMap<Room, ArrayList<Reservation>>(
+				new Comparator<Room>()
+				{
+					@Override
+					public int compare(Room room1, Room room2)
+					{
+						if (room1.getCost() > room2.getCost())
+							return -1;
+						else if (room1.getCost() < room2.getCost())
+							return 1;
+						else
+							return room1.getRoomNumber() - room2.getRoomNumber();
+					}
+				});
 		listeners = new ArrayList<>();
-		currSelectedCost = 0;
-		currCheckIn = null;
-		currCheckOut = null;
+		cost = 0;
+		checkIn = null;
+		checkOut = null;
 		initializeRooms();
 	}
 
@@ -55,28 +70,28 @@ public class DatabaseModel
 	 */
 	public void setCurrSelectedCost(int currSelectedCost)
 	{
-		this.currSelectedCost = currSelectedCost;
-		update();
-	}
-	
-	/**
-	 * @param currCheckIn the currCheckIn to set
-	 */
-	public void setCurrCheckIn(GregorianCalendar currCheckIn)
-	{
-		this.currCheckIn = currCheckIn;
+		this.cost = currSelectedCost;
 		update();
 	}
 
 	/**
-	 * @param currCheckOut the currCheckOut to set
+	 * @param checkIn the currCheckIn to set
 	 */
-	public void setCurrCheckOut(GregorianCalendar currCheckOut)
+	public void setCheckIn(GregorianCalendar checkIn)
 	{
-		this.currCheckOut = currCheckOut;
+		this.checkIn = checkIn;
 		update();
 	}
-	
+
+	/**
+	 * @param checkOut the currCheckOut to set
+	 */
+	public void setCheckOut(GregorianCalendar checkOut)
+	{
+		this.checkOut = checkOut;
+		update();
+	}
+
 	/**
 	 * The current user. It will be null if the manager is the current user.
 	 * @return the currentUser
@@ -95,7 +110,7 @@ public class DatabaseModel
 		this.currentUser = currentUser;
 		update();
 	}
-	
+
 	/**
 	 * Gets the current user's first and last name.
 	 * @return the current user's first and last name.
@@ -108,7 +123,7 @@ public class DatabaseModel
 		else
 			return "";
 	}
-	
+
 	/**
 	 * Looks for a user ID in the system.
 	 * @return account of user if found, otherwise null
@@ -132,7 +147,7 @@ public class DatabaseModel
 		accounts.add(account);
 		update();
 	}
-	
+
 	/**
 	 * Returns the ArrayList of rooms available in the hotel.
 	 * @return the rooms
@@ -151,72 +166,78 @@ public class DatabaseModel
 	{
 		String result = "<html> Results for: <br>Check-in: ";
 
-		if (currCheckIn != null)
+		if (checkIn != null)
 			result = result + new SimpleDateFormat("MM/dd/yyyy").
-				format(currCheckIn.getTime());
+			format(checkIn.getTime());
 		else
-			result = result + "null";
+			result = result + "not inputed";
 
 		result = result + "<br>Check-out: "; 
 
-		if (currCheckOut != null)
+		if (checkOut != null)
 			result = result + new SimpleDateFormat("MM/dd/yyyy").
-				format(currCheckOut.getTime());
+			format(checkOut.getTime());
 		else
-			result = result + "null";
+			result = result + "not inputed";
 
 		result = result + "<br>Cost: ";
-		if (currSelectedCost != 0)
-			result = result + currSelectedCost + "<br>";
+		if (cost != 0)
+			result = result + cost + "<br>";
 		else
-			result = result + "null<br>";
-		
-		if (currCheckIn != null && currCheckOut != null)
+			result = result + "not inputed<br>";
+
+		if (checkIn != null && checkOut != null)
 		{
-			if (currCheckIn.before(currCheckOut))
+			if (checkIn.before(checkOut))
 			{
-				if (checkDaysBetween(currCheckIn, currCheckOut) > 60)
+				if (checkDaysBetween() > 60)
 					result = result + "Error: Stay is too long.<br>";
+				else
+				{
+					if (cost != 0)
+					{
+						if (getAvailRooms().isEmpty())
+							result = result + "No Available Rooms";
+						else
+							result = result + "Available Rooms";
+					}
+					else
+						result = result + "Error: Missing input.";
+				}
 			}
 			else
 				result = result + "Error: Check-out date is before check-in date.<br>";
-			
-			if (currSelectedCost != 0)
-			{
-				if (getAvailRooms().isEmpty())
-					result = result + "No Available Rooms<br>";
-				else
-					result = result + "Available Rooms<br>";
-			}
-			else
-				result = result + "Error: Missing input.<br>";
 		}
 		else
-			result = result + "Error: Missing input.<br>";
-		
+			result = result + "Error: Missing input.";
+
 		return result + "</html>";
 	}
-	
+
 	public ArrayList<Room> getAvailRooms()
 	{
 		ArrayList<Room> availableRooms = new ArrayList<Room>();
-		
-		if (currCheckIn != null && currCheckOut != null && currSelectedCost != 0
-				&& currCheckIn.before(currCheckOut) && 
-				checkDaysBetween(currCheckIn, currCheckOut) <= 60)
-			for (Room room : rooms)
+
+		if (checkIn != null && checkOut != null && cost != 0 
+				&& checkIn.before(checkOut) && checkDaysBetween() <= 60)
+		{
+			for (Room room : reservations.keySet())
 			{
-				if (room.getCost() == currSelectedCost)
+				if (room.getCost() == cost)
 				{
-					if (!reservations.get(room).isEmpty())
+					if (reservations.get(room).isEmpty())
+					{
+						availableRooms.add(room);
+					}
+					else
 					{
 						boolean available = true;
 						for (Reservation r : reservations.get(room))
 						{
 							GregorianCalendar rStart = r.getStart();
 							GregorianCalendar rEnd = r.getEnd();
-							if (rStart.equals(currCheckIn) || rEnd.equals(currCheckOut) || 
-									(rStart.before(currCheckIn) && rEnd.after(currCheckOut)))
+							if (rStart.equals(checkIn) || rEnd.equals(checkOut) || 
+									(rStart.before(checkIn) && rEnd.after(checkOut)))
 								available = false;
 						}
 
@@ -225,21 +246,23 @@ public class DatabaseModel
 					}
 				}
 			}
-		
+		}
+
 		return availableRooms;
 	}
-	
-	private int checkDaysBetween(GregorianCalendar start, GregorianCalendar end)
+
+	private int checkDaysBetween()
 	{
+		GregorianCalendar temp = (GregorianCalendar)checkIn.clone();
 		int count = 0;
-		while (!start.equals(end))
+		while (!temp.equals(checkOut))
 		{
-			start.add(Calendar.DATE, 1);
+			temp.add(Calendar.DATE, 1);
 			count++;
 		}
 		return count;
 	}
-	
+
 	/**
 	 * Adds 10 economic rooms and 10 luxury rooms to the hotel.
 	 */
@@ -247,12 +270,15 @@ public class DatabaseModel
 	{
 		int i;
 		for (i = 1; i <= 10; i++)
+		{
 			rooms.add(new LuxuryRoom(i));
-		
-		for (i = 1; i <= 10; i++)
 			rooms.add(new NormalRoom(i));
+		}
+
+		for (Room r : rooms)
+			reservations.put(r, new ArrayList<Reservation>());
 	}
-	
+
 	/**
 	 * @param accounts the accounts to set
 	 */
@@ -260,7 +286,7 @@ public class DatabaseModel
 	{
 		listeners.add(listener);
 	}
-	
+
 	/**
 	 * Updates the listeners that there has been a change.
 	 */
@@ -270,7 +296,7 @@ public class DatabaseModel
 		for (ChangeListener listener : listeners)
 			listener.stateChanged(event);
 	}
-	
+
 	public void serialize() 
 	{
 		try
@@ -280,47 +306,47 @@ public class DatabaseModel
 			out.writeObject(accounts);
 			out.close();
 			file.close();
-			
+
 			file = new FileOutputStream("rooms.ser");
 			out = new ObjectOutputStream(file);
 			out.writeObject(rooms);
-			
+
 			out.close();
 			file.close();
 		}
 		catch(IOException io)
-	    {
-	        io.printStackTrace();
-	        return;
-	    }
+		{
+			io.printStackTrace();
+			return;
+		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public void deserialize()
 	{
 		try
-	        {
-				FileInputStream file = new FileInputStream("accounts.ser");
-				ObjectInputStream input = new ObjectInputStream(file);
-				accounts = (ArrayList<Account>) input.readObject();
-				input.close();
-				file.close();
-				
-				file = new FileInputStream("rooms.ser");
-				input = new ObjectInputStream(file);
-				rooms = (ArrayList<Room>) input.readObject();
-				input.close();
-				file.close();
-			}
-			catch(IOException io)
-			{
-				io.printStackTrace();
-				return;
-	        }
-			catch(ClassNotFoundException c)
-			{
-	            c.printStackTrace();
-	            return;
-	        }
+		{
+			FileInputStream file = new FileInputStream("accounts.ser");
+			ObjectInputStream input = new ObjectInputStream(file);
+			accounts = (ArrayList<Account>) input.readObject();
+			input.close();
+			file.close();
+
+			file = new FileInputStream("rooms.ser");
+			input = new ObjectInputStream(file);
+			rooms = (ArrayList<Room>) input.readObject();
+			input.close();
+			file.close();
+		}
+		catch(IOException io)
+		{
+			io.printStackTrace();
+			return;
+		}
+		catch(ClassNotFoundException c)
+		{
+			c.printStackTrace();
+			return;
+		}
 	}
 }

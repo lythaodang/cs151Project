@@ -19,4 +19,10 @@ public interface Room
 	 * @return the cost
 	 */
 	double getCost();
+	
+	/**
+	 * Gets the string representation of the Room.
+	 * @return the room type followed by the room number
+	 */
+	String toString();
 }

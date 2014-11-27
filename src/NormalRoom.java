@@ -1,4 +1,5 @@
 import java.io.Serializable;
+import java.util.GregorianCalendar;
 
 /**
  * COPYRIGHT 2014 InfiniteLoops. All Rights Reserved.
@@ -28,5 +29,11 @@ public class NormalRoom implements Room, Serializable
 	public double getCost() 
 	{
 		return COST;
+	}
+	
+	@Override
+	public String toString()
+	{
+		return this.getClass().getSimpleName() + " #" + roomNumber;
 	}
 }

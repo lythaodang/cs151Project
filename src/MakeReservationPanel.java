@@ -52,12 +52,11 @@ public class MakeReservationPanel extends JPanel
 		addTransactionButtons();
 	}
 		
-		
 	private void addInstructions()
 	{
 		JLabel instructions = new JLabel("<html>Please enter a check-in and "
 				+ "check-out date. Then choose your room type.<br> A list of "
-				+ "available rooms will be available when all input is valid. <br>"
+				+ "available rooms will be displayed when all input is valid. <br>"
 				+ "Note: Dates must be in correct format (MM/DD/YYYY).</html>");
 		c.gridwidth = 2;
 		c.weightx = 1;
@@ -155,16 +154,16 @@ public class MakeReservationPanel extends JPanel
 								"Error: Entered date is prior to today or is today.", 
 								"Error", JOptionPane.ERROR_MESSAGE);
 						if (inOrOut.equals("in"))
-							model.setCurrCheckIn(null);
+							model.setCheckIn(null);
 						else
-							model.setCurrCheckOut(null);
+							model.setCheckOut(null);
 					}
 					else 
 					{
 						if (inOrOut.equals("in"))
-							model.setCurrCheckIn(date);
+							model.setCheckIn(date);
 						else
-							model.setCurrCheckOut(date);
+							model.setCheckOut(date);
 					}
 				}
 				else
@@ -173,17 +172,17 @@ public class MakeReservationPanel extends JPanel
 							"Error: Invalid format.", 
 							"Error", JOptionPane.ERROR_MESSAGE);
 					if (inOrOut.equals("in"))
-						model.setCurrCheckIn(null);
+						model.setCheckIn(null);
 					else
-						model.setCurrCheckOut(null);
+						model.setCheckOut(null);
 				}
 			}
 			else
 			{
 				if (inOrOut.equals("in"))
-					model.setCurrCheckIn(null);
+					model.setCheckIn(null);
 				else
-					model.setCurrCheckOut(null);
+					model.setCheckOut(null);
 			}
 		}
 		
@@ -258,10 +257,11 @@ public class MakeReservationPanel extends JPanel
 	
 	private boolean isValidDate(String input) 
 	{
-      Date date = null;
       try 
       {
-          date = new SimpleDateFormat("MM/dd/YYYY").parse(input);
+          SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
+          format.setLenient(false);
+          format.parse(input);
       } 
       catch (Exception e) 
       {

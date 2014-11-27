@@ -1,4 +1,6 @@
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * COPYRIGHT 2014 InfiniteLoops. All Rights Reserved.
@@ -28,5 +30,11 @@ public class LuxuryRoom implements Room, Serializable
 	public double getCost() 
 	{
 		return COST;
+	}
+	
+	@Override
+	public String toString()
+	{
+		return this.getClass().getSimpleName() + " #" + roomNumber;
 	}
 }
