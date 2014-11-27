@@ -6,7 +6,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 
 import javax.swing.JButton;
@@ -22,6 +21,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 
 public class MakeReservationPanel extends JPanel
@@ -49,7 +50,6 @@ public class MakeReservationPanel extends JPanel
 		addInstructions();
 		addControllers();
 		addView();
-		addTransactionButtons();
 	}
 		
 	private void addInstructions()
@@ -101,7 +101,7 @@ public class MakeReservationPanel extends JPanel
 					@Override
 					public void actionPerformed(ActionEvent e)
 					{
-						model.setCurrSelectedCost(200);
+						model.setCost(200);
 					}
 				});
 		roomTypePanel.add(luxuryRoom);
@@ -112,7 +112,7 @@ public class MakeReservationPanel extends JPanel
 				{
 					public void actionPerformed(ActionEvent e)
 					{
-						model.setCurrSelectedCost(80);
+						model.setCost(80);
 					}
 				});
 		roomTypePanel.add(normalRoom);
@@ -121,6 +121,57 @@ public class MakeReservationPanel extends JPanel
 		c.gridy = 3;
 		c.gridwidth = 2;
 		this.add(roomTypePanel, c);
+		
+		JButton confirmed = new JButton("Confirmed");
+		confirmed.addActionListener(new 
+				ActionListener()
+				{
+					@Override
+					public void actionPerformed(ActionEvent e)
+					{
+						if (model.getSelectedRoom() != null)
+						{
+							model.addReservation();
+							int response = JOptionPane.showConfirmDialog(new JFrame(), 
+									"<html>Your reservation has been saved.<br>"
+											+ "Would you like to make more transactions?</html>", 
+											"Confirmation", JOptionPane.YES_NO_OPTION, 
+											JOptionPane.QUESTION_MESSAGE);
+							if (response == JOptionPane.NO_OPTION) 
+								manager.switchPanel("Transaction Done");
+							if (response == JOptionPane.YES_OPTION) 
+								;
+							checkIn.setText("");
+							checkOut.setText("");
+							model.setCheckIn(null);
+							model.setCheckOut(null);
+							model.setCost(0);
+						}
+					}
+				});
+		c.gridy = 6;
+		c.gridwidth = 1;
+		c.weighty = 0;
+		this.add(confirmed, c);
+		
+		JButton trans = new JButton("Transaction Done");
+		trans.addActionListener(new 
+				ActionListener()
+				{
+					@Override
+					public void actionPerformed(ActionEvent e)
+					{
+						checkIn.setText("");
+						checkOut.setText("");
+						model.setCheckIn(null);
+						model.setCheckOut(null);
+						model.setCost(0);
+						
+						manager.switchPanel("Transaction Done");
+					}
+				});
+		c.gridx = 1;
+		this.add(trans, c);
 	}
 	
 	class TextFieldListener implements DocumentListener
@@ -196,6 +247,7 @@ public class MakeReservationPanel extends JPanel
 	private void addView()
 	{
 		final JLabel availableLabel = new JLabel(model.getValidityOfInput());
+		c.gridx = 0;
 		c.gridy = 4;
 		c.gridwidth = 2;
 		this.add(availableLabel, c);
@@ -209,6 +261,16 @@ public class MakeReservationPanel extends JPanel
 		c.gridy = 5;
 		this.add(listScroller, c);
 		
+		list.addListSelectionListener(new 
+				ListSelectionListener()
+				{
+					@Override
+					public void valueChanged(ListSelectionEvent event)
+					{
+						model.setSelectedRoom((Room)list.getSelectedValue());
+					}
+				});
+		
 		ChangeListener listener = new
 				ChangeListener()
 				{
@@ -221,38 +283,6 @@ public class MakeReservationPanel extends JPanel
 				};
 				
 		model.addChangeListener(listener);
-	}
-	
-	private void addTransactionButtons()
-	{
-		JButton confirmed = new JButton("Confirmed");
-		confirmed.addActionListener(new 
-				ActionListener()
-				{
-					@Override
-					public void actionPerformed(ActionEvent e)
-					{
-						
-					}
-				});
-		c.gridx = 0;
-		c.gridy = 6;
-		c.gridwidth = 1;
-		c.weighty = 0;
-		this.add(confirmed, c);
-		
-		JButton trans = new JButton("Transaction Done");
-		trans.addActionListener(new 
-				ActionListener()
-				{
-					@Override
-					public void actionPerformed(ActionEvent e)
-					{
-						
-					}
-				});
-		c.gridx = 1;
-		this.add(trans, c);
 	}
 	
 	private boolean isValidDate(String input) 

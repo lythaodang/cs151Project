@@ -1,4 +1,5 @@
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  * COPYRIGHT 2014 InfiniteLoops. All Rights Reserved.
@@ -16,6 +17,7 @@ public class Account implements Serializable
 	private String userID;
 	private String firstName;
 	private String lastName;
+	private ArrayList<Reservation> reservations;
 	
 	/**
 	 * Create an account with a userID and name.
@@ -81,5 +83,10 @@ public class Account implements Serializable
 	public void setLastName(String lastName)
 	{
 		this.lastName = lastName;
+	}
+	
+	public ArrayList<Reservation> getReservations()
+	{
+		return reservations;
 	}
 }

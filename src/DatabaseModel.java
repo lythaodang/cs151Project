@@ -32,9 +32,13 @@ public class DatabaseModel
 	private ArrayList<Account> accounts;
 	private TreeMap<Room, ArrayList<Reservation>> reservations;
 	private ArrayList<ChangeListener> listeners;
+	
+	// variables used for the transaction
 	private int cost;
 	private GregorianCalendar checkIn;
 	private GregorianCalendar checkOut;
+	private Room selectedRoom;
+	private ArrayList<Reservation> transaction;
 
 	/**
 	 * Constructs the database. Loads the 
@@ -62,20 +66,32 @@ public class DatabaseModel
 		cost = 0;
 		checkIn = null;
 		checkOut = null;
+		selectedRoom = null;
+		transaction = new ArrayList<Reservation>();
 		initializeRooms();
 	}
-
-	/**
-	 * @param currSelectedCost the currSelectedCost to set
-	 */
-	public void setCurrSelectedCost(int currSelectedCost)
+	
+	public void setSelectedRoom(Room room)
 	{
-		this.cost = currSelectedCost;
+		selectedRoom = room;
+	}
+
+	public Room getSelectedRoom()
+	{
+		return selectedRoom;
+	}
+	
+	/**
+	 * @param currSelectedCost the cost to set
+	 */
+	public void setCost(int cost)
+	{
+		this.cost = cost;
 		update();
 	}
 
 	/**
-	 * @param checkIn the currCheckIn to set
+	 * @param checkIn the checkIn to set
 	 */
 	public void setCheckIn(GregorianCalendar checkIn)
 	{
@@ -84,7 +100,7 @@ public class DatabaseModel
 	}
 
 	/**
-	 * @param checkOut the currCheckOut to set
+	 * @param checkOut the checkOut to set
 	 */
 	public void setCheckOut(GregorianCalendar checkOut)
 	{
@@ -92,6 +108,13 @@ public class DatabaseModel
 		update();
 	}
 
+	public void addReservation()
+	{
+		Reservation newReservation = new Reservation(checkIn, checkOut, currentUser);
+		reservations.get(selectedRoom).add(newReservation);
+		transaction.add(newReservation);
+	}
+	
 	/**
 	 * The current user. It will be null if the manager is the current user.
 	 * @return the currentUser
@@ -251,6 +274,10 @@ public class DatabaseModel
 		return availableRooms;
 	}
 
+	/**
+	 * Checks how many days are between the inputed check in and check out dates.
+	 * @return the number of days
+	 */
 	private int checkDaysBetween()
 	{
 		GregorianCalendar temp = (GregorianCalendar)checkIn.clone();
@@ -297,6 +324,9 @@ public class DatabaseModel
 			listener.stateChanged(event);
 	}
 
+	/**
+	 * Serializes the accounts and rooms.
+	 */
 	public void serialize() 
 	{
 		try
@@ -321,6 +351,9 @@ public class DatabaseModel
 		}
 	}
 
+	/**
+	 * Deserializes the accounts and rooms.
+	 */
 	@SuppressWarnings("unchecked")
 	public void deserialize()
 	{

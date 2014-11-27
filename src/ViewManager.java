@@ -44,7 +44,6 @@ public class ViewManager
 		cards.add(new ManagerViewPanel(this), "Calendar");
 		cards.add(new ManagerMenuPanel(this), "Manager");
 		cards.add(new MakeReservationPanel(this), "Make a Reservation");
-		cards.add(new AvailablePanel(this), "Available Rooms");
 		
 		frame.add(cards);
 		frame.setSize(850, 600);
