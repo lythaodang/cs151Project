@@ -70,6 +70,7 @@ public class Model
 		selectedDate = null;
 		
 		initializeRooms();
+		deserialize();
 	}
 	
 	public ArrayList<Reservation> getTransaction()
@@ -96,8 +97,8 @@ public class Model
 			{
 				if (res.getRoom().equals(room))
 				{
-					if (res.getStart().equals(selectedDate) ||
-							res.getEnd().equals(selectedDate) ||
+					if (compareDates(res.getStart(), selectedDate) ||
+							compareDates(res.getEnd(), selectedDate) ||
 							(res.getStart().before(selectedDate) && 
 							res.getEnd().after(selectedDate)))
 					{
@@ -118,6 +119,12 @@ public class Model
 		}
 		
 		return result;
+	}
+	
+	private boolean compareDates(GregorianCalendar date1, GregorianCalendar date2)
+	{
+		return new SimpleDateFormat("MM/dd/yyyy").format(date1.getTime()).
+				equals(new SimpleDateFormat("MM/dd/yyyy").format(date2.getTime()));
 	}
 	
 	public GregorianCalendar getSelectedDate()
@@ -324,6 +331,7 @@ public class Model
 					GregorianCalendar rEnd = res.getEnd();
 					if (rStart.equals(checkIn) || rStart.equals(checkOut) ||
 							rEnd.equals(checkIn) || rEnd.equals(checkOut) || 
+							(checkIn.before(rStart) && checkOut.after(rEnd)) ||
 							(rStart.before(checkIn) && rEnd.after(checkIn)) ||
 							(rStart.before(checkOut) && rEnd.after(checkOut)))
 						availRooms.remove(res.getRoom());

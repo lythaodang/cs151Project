@@ -56,7 +56,7 @@ public class ReceiptPanel extends JPanel
 						receipt.setText(simple.toString());
 					}
 				});
-		c.weighty = 0.5;
+		c.weighty = 0.25;
 		c.gridy = 1;
 		c.gridwidth = 1;
 		this.add(simpleButton, c);

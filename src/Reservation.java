@@ -92,4 +92,19 @@ public class Reservation implements Serializable
 				new SimpleDateFormat("MM/dd/yyyy").format(end.getTime()) + " \nCost: "
 				+ days + " day(s) X $" + room.getCost() + " a night = $" + days * room.getCost();
 	}
+	
+	@Override
+	public int hashCode()
+	{
+		return this.toString().hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this.hashCode() == obj.hashCode())
+			return true;
+		
+		return true;
+	}
 }

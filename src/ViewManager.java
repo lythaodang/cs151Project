@@ -22,7 +22,6 @@ import javax.swing.JPanel;
 public class ViewManager
 {
 	private Model database;
-	private Controller controller;
 	private JFrame frame;
 	private JPanel cards;
 	private CardLayout cardLayout;
@@ -30,10 +29,9 @@ public class ViewManager
 	/**
 	 * Constructs the frame and adds panels to CardLayout.
 	 */
-	public ViewManager(final Model database) 
+	public ViewManager(final Model model) 
 	{
-		this.database = database;
-		database.deserialize();
+		this.database = model;
 		frame = new JFrame("InfiniteLoops Hotel Manager");
 		cards = new JPanel(cardLayout = new CardLayout());
 		
@@ -53,7 +51,6 @@ public class ViewManager
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // change for load/save functionality
 		frame.setVisible(true);
-		controller = new Controller(this.database, this);
 	}
 	
 	public Model getModel()

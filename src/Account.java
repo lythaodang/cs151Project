@@ -100,4 +100,19 @@ public class Account implements Serializable
 	{
 		reservations.remove(r);
 	}
+	
+	@Override
+	public int hashCode()
+	{
+		return userID.hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this.hashCode() == obj.hashCode())
+			return true;
+		
+		return false;
+	}
 }

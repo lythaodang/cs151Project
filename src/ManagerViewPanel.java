@@ -52,7 +52,6 @@ public class ManagerViewPanel extends JPanel
 		addDropDown();
 		addCalendar();
 		addRoomInfo();
-		addBackButton();
 		model.setSelectedDate(Model.TODAY);
 	}
 
@@ -69,6 +68,7 @@ public class ManagerViewPanel extends JPanel
 					{
 						public void actionPerformed(ActionEvent e)
 						{
+							selectedDay = null;
 							GregorianCalendar temp = model.getSelectedDate();
 							temp.set(Calendar.MONTH, months.getSelectedIndex());
 							model.setSelectedDate(temp);
@@ -91,6 +91,7 @@ public class ManagerViewPanel extends JPanel
 				{
 					public void stateChanged(ChangeEvent e)
 					{
+						selectedDay = null;
 						GregorianCalendar temp = model.getSelectedDate();
 						temp.set(Calendar.YEAR, (int)spinnerModel.getValue());
 						model.setSelectedDate(temp);
@@ -102,6 +103,27 @@ public class ManagerViewPanel extends JPanel
 
 		c.weighty = 0.25;
 		add(dropDownPanel, c);
+		
+		JButton back = new JButton("Back");
+		back.addActionListener(new 
+				ActionListener()
+				{
+					@Override
+					public void actionPerformed(ActionEvent e)
+					{
+						selectedDay = null;
+						spinnerModel.setValue(Model.TODAY.get(Calendar.YEAR));
+						months.setSelectedItem(monthList[Model.TODAY.get(Calendar.MONTH)]);
+						model.setSelectedDate(Model.TODAY);
+						manager.switchPanel("Manager");
+					}
+				});
+		c.gridx = 0;
+		c.gridy = 2;
+		c.gridwidth = 2;
+		c.gridheight = 1;
+		c.weighty = 0.5;
+		this.add(back, c);
 	}
 	
 	public void addCalendar()
@@ -181,6 +203,7 @@ public class ManagerViewPanel extends JPanel
 		c.weightx = 0;
 		c.weighty = 1;
 		c.gridy = 1;
+		c.gridwidth = 1;
 		c.weightx = 0.25;
 		add(calendarPanel, c);
 	}
@@ -208,29 +231,9 @@ public class ManagerViewPanel extends JPanel
 					{
 						if (selectedDay != null)
 							roomInfo.setText(model.getRoomInformation());
+						else
+							roomInfo.setText("");
 					}
 				});
-	}
-	
-	public void addBackButton()
-	{
-		JButton back = new JButton("Back");
-		back.addActionListener(new 
-				ActionListener()
-				{
-					@Override
-					public void actionPerformed(ActionEvent e)
-					{
-						model.setSelectedDate(Model.TODAY);
-						selectedDay = null;
-						manager.switchPanel("Manager");
-					}
-				});
-		c.gridx = 0;
-		c.gridy = 2;
-		c.gridwidth = 2;
-		c.gridheight = 1;
-		c.weighty = 0.5;
-		add(back, c);
 	}
 }

@@ -37,4 +37,19 @@ public class LuxuryRoom implements Room, Serializable
 	{
 		return this.getClass().getSimpleName() + " #" + roomNumber;
 	}
+	
+	@Override
+	public int hashCode()
+	{
+		return this.toString().hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this.hashCode() == obj.hashCode())
+			return true;
+		
+		return false;
+	}
 }
