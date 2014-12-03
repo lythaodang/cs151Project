@@ -14,7 +14,7 @@ import javax.swing.JPanel;
 public class ManagerMenuPanel extends JPanel
 {
 	GridBagConstraints c;
-	private final DatabaseModel model;
+	private final Model model;
 	private ViewManager manager;
 	
 	public ManagerMenuPanel(final ViewManager manager)

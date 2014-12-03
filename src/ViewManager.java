@@ -21,7 +21,7 @@ import javax.swing.JPanel;
  */
 public class ViewManager
 {
-	private DatabaseModel database;
+	private Model database;
 	private Controller controller;
 	private JFrame frame;
 	private JPanel cards;
@@ -30,7 +30,7 @@ public class ViewManager
 	/**
 	 * Constructs the frame and adds panels to CardLayout.
 	 */
-	public ViewManager(final DatabaseModel database) 
+	public ViewManager(final Model database) 
 	{
 		this.database = database;
 		database.deserialize();
@@ -44,9 +44,11 @@ public class ViewManager
 		cards.add(new ManagerViewPanel(this), "Calendar");
 		cards.add(new ManagerMenuPanel(this), "Manager");
 		cards.add(new MakeReservationPanel(this), "Make a Reservation");
+		cards.add(new ReceiptPanel(this), "Receipt");
+		cards.add(new ViewCancelPanel(this), "View/Cancel a Reservation");
 		
 		frame.add(cards);
-		frame.setSize(850, 600);
+		frame.setSize(700, 500);
 		frame.setLocationRelativeTo(null);
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // change for load/save functionality
@@ -54,7 +56,7 @@ public class ViewManager
 		controller = new Controller(this.database, this);
 	}
 	
-	public DatabaseModel getModel()
+	public Model getModel()
 	{
 		return database;
 	}

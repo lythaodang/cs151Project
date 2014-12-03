@@ -12,42 +12,46 @@
  */
 public class ComprehensiveReceipt implements Receipt
 {
-    private double total;
-    private double subTotal;
-    private int roomCost;
-    private int days;
-    private static double TAX = .0875;
+	private Account user;
+	private static double TAX = .0875;
 
-    /**
-     * Constructor for a comprehensive receipt, takes the cost of a room per night and the amount of
-     * nights stayed.
-     * @param roomCost Cost of the room per night.
-     * @param days Number of nights stayed.
-     */
-    public ComprehensiveReceipt (int roomCost, int days)
-    {
-        this.roomCost = roomCost;
-        this.days = days;
-    }
+	/**
+	 * Takes in an account. 
+	 * This receipt will display all reservations made by the user.
+	 * @param roomCost Cost of the room per night.
+	 * @param days Number of nights stayed.
+	 */
+	public ComprehensiveReceipt(Account user)
+	{
+		this.user = user;
+	}
 
-    /**
-     * Generates a formatted receipt in comprehensive form.
-     * @return Comprehensive receipt.
-     */
-    public String toString()
-    {
-        String receipt = "";
-        for (int i = 0; i < days; i++)
-        {
-            receipt += "1 Night: " + roomCost + ".\n";
-        }
-        subTotal = roomCost * days;
-        receipt += "Subtotal: " + subTotal + ".\n";
-        double tax = subTotal * TAX;
-        receipt += "Tax: " + tax + ".\n";
-        receipt += "---------------";
-        total = subTotal + tax;
-        receipt += "Total: " + total + ".\n";
-        return receipt;
-    }
+	public void setUser(Account user)
+	{
+		this.user = user;
+	}
+	
+	/**
+	 * Generates a formatted receipt in comprehensive form.
+	 * @return Comprehensive receipt.
+	 */
+	public String toString()
+	{
+		String receipt = "Name: " + user.getFirstName() + " " + user.getLastName()
+				+ "\nUser ID: " + user.getUserID();
+		
+		double cost = 0;
+		int i = 1;
+		for (Reservation r : user.getReservations())
+		{
+			receipt += "\n\nReservation #" + i + "\n" + r.toString();
+			cost += r.getCost();
+			i++;
+		}
+		
+		receipt += "\n\nSubtotal: $" + cost + "\nTax: $" + String.format("%.2f", cost * TAX)
+				+ "\nTotal: $" + String.format("%.2f", cost + (cost * TAX));
+		
+		return receipt;
+	}
 }

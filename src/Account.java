@@ -29,6 +29,7 @@ public class Account implements Serializable
 		this.userID = userID;
 		this.firstName = firstName;
 		this.lastName = lastName;
+		reservations = new ArrayList<Reservation>();
 	}
 
 	/**

@@ -4,7 +4,7 @@ public class Runner
 
 	public static void main(String[] args)
 	{
-		DatabaseModel database = new DatabaseModel();
+		Model database = new Model();
 		ViewManager viewer = new ViewManager(database);
 	}
 }

@@ -15,7 +15,7 @@ import javax.swing.JTextField;
 public class ReturningGuestPanel extends JPanel
 {
 	GridBagConstraints c;
-	private final DatabaseModel model;
+	private final Model model;
 	private ViewManager manager;
 	
 	public ReturningGuestPanel(final ViewManager manager)

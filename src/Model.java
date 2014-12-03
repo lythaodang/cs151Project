@@ -3,9 +3,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.TreeMap;
@@ -25,17 +27,17 @@ import javax.swing.event.ChangeListener;
  * This is the database of the hotel. It holds rooms, accounts, and
  * current user.
  */
-public class DatabaseModel
+public class Model 
 {
 	private Account currentUser;
 	private ArrayList<Room> rooms;
 	private ArrayList<Account> accounts;
-	private TreeMap<Room, ArrayList<Reservation>> reservations;
+	private ArrayList<Reservation> reservations;
 	private ArrayList<ChangeListener> listeners;
 	public static final GregorianCalendar TODAY = new GregorianCalendar();
 	
 	// variables used for the transaction
-	private int cost;
+	private double cost;
 	private GregorianCalendar checkIn;
 	private GregorianCalendar checkOut;
 	private Room selectedRoom;
@@ -47,25 +49,12 @@ public class DatabaseModel
 	/**
 	 * Constructs the database. Loads the 
 	 */
-	public DatabaseModel()
+	public Model()
 	{
 		currentUser = null;
 		rooms = new ArrayList<>();
 		accounts = new ArrayList<>();
-		reservations = new TreeMap<Room, ArrayList<Reservation>>(
-				new Comparator<Room>()
-				{
-					@Override
-					public int compare(Room room1, Room room2)
-					{
-						if (room1.getCost() > room2.getCost())
-							return -1;
-						else if (room1.getCost() < room2.getCost())
-							return 1;
-						else
-							return room1.getRoomNumber() - room2.getRoomNumber();
-					}
-				});
+		reservations = new ArrayList<>();
 		listeners = new ArrayList<>();
 		TODAY.clear(Calendar.HOUR);
 		TODAY.clear(Calendar.MINUTE);
@@ -76,40 +65,56 @@ public class DatabaseModel
 		checkIn = null;
 		checkOut = null;
 		selectedRoom = null;
-		transaction = new ArrayList<Reservation>();
+		transaction = new ArrayList<>();
 		
 		selectedDate = null;
 		
 		initializeRooms();
 	}
 	
+	public ArrayList<Reservation> getTransaction()
+	{
+		return transaction;
+	}
+	
+	/**
+	 * Gets all room information for a selected day for the manager view panel.
+	 * @return availability of all rooms for a selected day
+	 */
 	public String getRoomInformation()
 	{
 		String result = "Room Information for " + 
 				new SimpleDateFormat("MM/dd/yyyy").format(selectedDate.getTime())
-				+ "\n";
+				+ "\n\n";
+		boolean available;
 		
-		for (Room room : reservations.keySet())
+		for (Room room : rooms)
 		{
-			result = result + "\n" + room.toString() + "\n";
-			
-			if (reservations.get(room).isEmpty())
-				result = result + "Available\n";
-			else
-				for (Reservation res : reservations.get(room))
+			result += room.toString() + "\n";
+			available = true;
+			for (Reservation res : reservations)
+			{
+				if (res.getRoom().equals(room))
 				{
-					if ((res.getStart().before(selectedDate) ||
-							res.getStart().equals(selectedDate)) && 
-							(res.getEnd().after(selectedDate) ||
-							res.getEnd().equals(selectedDate)))
+					if (res.getStart().equals(selectedDate) ||
+							res.getEnd().equals(selectedDate) ||
+							(res.getStart().before(selectedDate) && 
+							res.getEnd().after(selectedDate)))
 					{
-						result = result + "Unavailable\nReserved from: " + 
-								res.getStart() + " to " + res.getEnd() + "\n" + 
-								"Reserved by: " + res.getUserID().getFirstName().toUpperCase() +
-								" " + res.getUserID().getLastName().toUpperCase() + "(ID " +
-								res.getUserID();
+						result += "Unavailable\nReserved from: " + 
+								new SimpleDateFormat("MM/dd/yyyy").format(res.getStart().getTime()) + 
+								" to " + new SimpleDateFormat("MM/dd/yyyy").format(res.getEnd().getTime()) 
+								+ "\n" + "Reserved by: " + res.getUserID().getFirstName().toUpperCase() +
+								" " + res.getUserID().getLastName().toUpperCase() + " (ID: " +
+								res.getUserID().getUserID() + ")\n\n";
+						available = false;
+						break;
 					}
 				}
+			}
+			
+			if (available)
+				result += "Available\n\n";
 		}
 		
 		return result;
@@ -122,7 +127,7 @@ public class DatabaseModel
 	
 	public void setSelectedDate(GregorianCalendar date)
 	{
-		selectedDate = date;
+		selectedDate = (GregorianCalendar) date.clone();
 		update();
 	}
 	
@@ -165,10 +170,17 @@ public class DatabaseModel
 
 	public void addReservation()
 	{
-		Reservation newReservation = new Reservation(checkIn, checkOut, currentUser);
+		Reservation newReservation = new Reservation(selectedRoom, checkIn, checkOut, currentUser);
 		currentUser.addReservation(newReservation);
-		reservations.get(selectedRoom).add(newReservation);
+		reservations.add(newReservation);
 		transaction.add(newReservation);
+	}
+	
+	public void cancelReservation(Reservation r)
+	{
+		reservations.remove(r);
+		currentUser.cancelReservation(r);
+		update();
 	}
 	
 	/**
@@ -295,39 +307,31 @@ public class DatabaseModel
 
 	public ArrayList<Room> getAvailRooms()
 	{
-		ArrayList<Room> availableRooms = new ArrayList<Room>();
-
+		ArrayList<Room> availRooms = new ArrayList<Room>();
+		
 		if (checkIn != null && checkOut != null && cost != 0 
 				&& checkIn.before(checkOut) && checkDaysBetween() <= 60)
 		{
-			for (Room room : reservations.keySet())
-			{
+			for (Room room : rooms)
 				if (room.getCost() == cost)
+					availRooms.add(room);
+			
+			for (Reservation res : reservations)
+			{
+				if (res.getRoom().getCost() == cost)
 				{
-					if (reservations.get(room).isEmpty())
-					{
-						availableRooms.add(room);
-					}
-					else
-					{
-						boolean available = true;
-						for (Reservation r : reservations.get(room))
-						{
-							GregorianCalendar rStart = r.getStart();
-							GregorianCalendar rEnd = r.getEnd();
-							if (rStart.equals(checkIn) || rEnd.equals(checkOut) || 
-									(rStart.before(checkIn) && rEnd.after(checkOut)))
-								available = false;
-						}
-
-						if (available)
-							availableRooms.add(room);
-					}
+					GregorianCalendar rStart = res.getStart();
+					GregorianCalendar rEnd = res.getEnd();
+					if (rStart.equals(checkIn) || rStart.equals(checkOut) ||
+							rEnd.equals(checkIn) || rEnd.equals(checkOut) || 
+							(rStart.before(checkIn) && rEnd.after(checkIn)) ||
+							(rStart.before(checkOut) && rEnd.after(checkOut)))
+						availRooms.remove(res.getRoom());
 				}
 			}
 		}
 
-		return availableRooms;
+		return availRooms;
 	}
 
 	/**
@@ -353,13 +357,9 @@ public class DatabaseModel
 	{
 		int i;
 		for (i = 1; i <= 10; i++)
-		{
 			rooms.add(new LuxuryRoom(i));
+		for (i = 1; i <= 10; i++)
 			rooms.add(new NormalRoom(i));
-		}
-
-		for (Room r : rooms)
-			reservations.put(r, new ArrayList<Reservation>());
 	}
 
 	/**
@@ -396,7 +396,11 @@ public class DatabaseModel
 			file = new FileOutputStream("rooms.ser");
 			out = new ObjectOutputStream(file);
 			out.writeObject(rooms);
-
+			file.close();
+			
+			file = new FileOutputStream("reservations.ser");
+			out = new ObjectOutputStream(file);
+			out.writeObject(reservations);
 			out.close();
 			file.close();
 		}
@@ -424,6 +428,12 @@ public class DatabaseModel
 			file = new FileInputStream("rooms.ser");
 			input = new ObjectInputStream(file);
 			rooms = (ArrayList<Room>) input.readObject();
+			input.close();
+			file.close();
+			
+			file = new FileInputStream("reservations.ser");
+			input = new ObjectInputStream(file);
+			reservations = (ArrayList<Reservation>) input.readObject();
 			input.close();
 			file.close();
 		}

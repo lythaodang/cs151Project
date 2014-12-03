@@ -13,7 +13,7 @@ import javax.swing.event.ChangeListener;
 public class GuestMenuPanel extends JPanel
 {
 	private GridBagConstraints c;
-	private final DatabaseModel model;
+	private final Model model;
 	private ViewManager manager;
 	
 	public GuestMenuPanel(final ViewManager manager)
@@ -78,7 +78,7 @@ public class GuestMenuPanel extends JPanel
 					@Override
 					public void actionPerformed(ActionEvent e)
 					{
-						manager.switchPanel("View or Cancel a Reservation");
+						manager.switchPanel("View/Cancel a Reservation");
 					}
 				});
 		c.gridy = 2;

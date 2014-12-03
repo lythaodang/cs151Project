@@ -34,7 +34,7 @@ public class ManagerViewPanel extends JPanel
 	private final static int MAX_WEEKS_IN_A_MONTH = 6;
 
 	private GridBagConstraints c;
-	private final DatabaseModel model;
+	private final Model model;
 	private ViewManager manager;
 	private JButton selectedDay;
 
@@ -53,14 +53,14 @@ public class ManagerViewPanel extends JPanel
 		addCalendar();
 		addRoomInfo();
 		addBackButton();
-		model.setSelectedDate(DatabaseModel.TODAY);
+		model.setSelectedDate(Model.TODAY);
 	}
 
 	public void addDropDown()
 	{
 		JPanel dropDownPanel = new JPanel(new GridLayout(1, 2, 10, 10));
 		final JComboBox<Object> months = new JComboBox<Object>(monthList);
-		months.setSelectedItem(monthList[DatabaseModel.TODAY.get(Calendar.MONTH)]);
+		months.setSelectedItem(monthList[Model.TODAY.get(Calendar.MONTH)]);
 		months.setBackground(Color.white);
 		((JLabel)months.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
 		
@@ -76,9 +76,9 @@ public class ManagerViewPanel extends JPanel
 					});
 		
 		final SpinnerModel spinnerModel = new SpinnerNumberModel(
-				DatabaseModel.TODAY.get(Calendar.YEAR), 
-				DatabaseModel.TODAY.getMinimum(GregorianCalendar.YEAR), 
-				DatabaseModel.TODAY.getMaximum(GregorianCalendar.YEAR), 1);
+				Model.TODAY.get(Calendar.YEAR), 
+				Model.TODAY.getMinimum(GregorianCalendar.YEAR), 
+				Model.TODAY.getMaximum(GregorianCalendar.YEAR), 1);
 		JSpinner spinner = new JSpinner(spinnerModel);
 		NumberEditor editor = new NumberEditor(spinner, "#");
 		editor.getTextField().setHorizontalAlignment(JTextField.CENTER);
@@ -221,7 +221,7 @@ public class ManagerViewPanel extends JPanel
 					@Override
 					public void actionPerformed(ActionEvent e)
 					{
-						model.setSelectedDate(DatabaseModel.TODAY);
+						model.setSelectedDate(Model.TODAY);
 						selectedDay = null;
 						manager.switchPanel("Manager");
 					}

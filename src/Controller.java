@@ -1,10 +1,10 @@
 
 public class Controller 
 {
-	private DatabaseModel m;
+	private Model m;
 	private ViewManager v;
 	
-	public Controller(DatabaseModel m, ViewManager v)
+	public Controller(Model m, ViewManager v)
 	{
 		this.m = m;
 		this.v = v;

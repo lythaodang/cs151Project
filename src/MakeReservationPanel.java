@@ -28,7 +28,7 @@ import javax.swing.event.ListSelectionListener;
 public class MakeReservationPanel extends JPanel
 {
 	private GridBagConstraints c;
-	private final DatabaseModel model;
+	private final Model model;
 	private ViewManager manager;
 	
 	public MakeReservationPanel(final ViewManager manager)
@@ -132,7 +132,7 @@ public class MakeReservationPanel extends JPanel
 											"Confirmation", JOptionPane.YES_NO_OPTION, 
 											JOptionPane.QUESTION_MESSAGE);
 							if (response == JOptionPane.NO_OPTION) 
-								manager.switchPanel("Transaction Done");
+								manager.switchPanel("Receipt");
 							if (response == JOptionPane.YES_OPTION) 
 								;
 							checkIn.setText("");
@@ -155,13 +155,20 @@ public class MakeReservationPanel extends JPanel
 					@Override
 					public void actionPerformed(ActionEvent e)
 					{
-						checkIn.setText("");
-						checkOut.setText("");
-						model.setCheckIn(null);
-						model.setCheckOut(null);
-						model.setCost(0);
-						
-						manager.switchPanel("Transaction Done");
+						if (model.getTransaction().isEmpty())
+							JOptionPane.showMessageDialog(new JFrame(), 
+									"Error: No reservations have been made", 
+									"Error", JOptionPane.ERROR_MESSAGE);
+						else
+						{
+							checkIn.setText("");
+							checkOut.setText("");
+							model.setCheckIn(null);
+							model.setCheckOut(null);
+							model.setCost(0);
+
+							manager.switchPanel("Receipt");
+						}
 					}
 				});
 		c.gridx = 1;
@@ -193,7 +200,7 @@ public class MakeReservationPanel extends JPanel
 				if (isValidDate(tf.getText()))
 				{
 					GregorianCalendar date = stringToDate(tf.getText());
-					if (date.equals(DatabaseModel.TODAY) || date.before(DatabaseModel.TODAY))
+					if (date.equals(Model.TODAY) || date.before(Model.TODAY))
 					{
 						JOptionPane.showMessageDialog(new JFrame(), 
 								"Error: Entered date is prior to today or is today.", 
