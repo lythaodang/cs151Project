@@ -158,10 +158,13 @@ public class ManagerViewPanel extends JPanel
 						@Override
 						public void actionPerformed(ActionEvent e)
 						{
-							selectedDay = button;
-							GregorianCalendar temp = model.getSelectedDate();
-							temp.set(Calendar.DATE, Integer.parseInt(button.getText()));
-							model.setSelectedDate(temp);
+							if (!button.getText().equals(""))
+							{
+								selectedDay = button;
+								GregorianCalendar temp = model.getSelectedDate();
+								temp.set(Calendar.DATE, Integer.parseInt(button.getText()));
+								model.setSelectedDate(temp);
+							}
 						}
 					});
 			}

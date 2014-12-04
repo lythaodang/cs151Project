@@ -35,6 +35,7 @@ public class Model
 	private ArrayList<Reservation> reservations;
 	private ArrayList<ChangeListener> listeners;
 	public static final GregorianCalendar TODAY = new GregorianCalendar();
+	private static final double TAX = .0875;
 	
 	// variables used for the transaction
 	private double cost;
@@ -107,7 +108,9 @@ public class Model
 								" to " + new SimpleDateFormat("MM/dd/yyyy").format(res.getEnd().getTime()) 
 								+ "\n" + "Reserved by: " + res.getUserID().getFirstName().toUpperCase() +
 								" " + res.getUserID().getLastName().toUpperCase() + " (ID: " +
-								res.getUserID().getUserID() + ")\n\n";
+								res.getUserID().getUserID() + ")\nSubtotal: $" + res.getCost() + "\nTax: $" + 
+								String.format("%.2f", res.getCost() * TAX) + "\nTotal: $" + 
+								String.format("%.2f", res.getCost() + (res.getCost() * TAX)) + "\n\n";
 						available = false;
 						break;
 					}
@@ -121,7 +124,7 @@ public class Model
 		return result;
 	}
 	
-	private boolean compareDates(GregorianCalendar date1, GregorianCalendar date2)
+	public boolean compareDates(GregorianCalendar date1, GregorianCalendar date2)
 	{
 		return new SimpleDateFormat("MM/dd/yyyy").format(date1.getTime()).
 				equals(new SimpleDateFormat("MM/dd/yyyy").format(date2.getTime()));

@@ -200,10 +200,10 @@ public class MakeReservationPanel extends JPanel
 				if (isValidDate(tf.getText()))
 				{
 					GregorianCalendar date = stringToDate(tf.getText());
-					if (date.equals(Model.TODAY) || date.before(Model.TODAY))
+					if (date.before(Model.TODAY) && !model.compareDates(date, Model.TODAY))
 					{
 						JOptionPane.showMessageDialog(new JFrame(), 
-								"Error: Entered date is prior to today or is today.", 
+								"Error: Entered date is prior to today.", 
 								"Error", JOptionPane.ERROR_MESSAGE);
 						if (inOrOut.equals("in"))
 							model.setCheckIn(null);

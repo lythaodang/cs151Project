@@ -58,6 +58,11 @@ public class Reservation implements Serializable
 		return days * room.getCost();
 	}
 
+	public int getDays()
+	{
+		return days;
+	}
+	
 	/**
 	 * Return the date that the reservation starts.
 	 * @return GregorianCalendar of the start date
