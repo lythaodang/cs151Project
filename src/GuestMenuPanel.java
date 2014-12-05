@@ -26,7 +26,7 @@ public class GuestMenuPanel extends JPanel
 		c.insets = new Insets(25, 10, 25, 10);
 	
 		final JLabel name = new JLabel();
-		ChangeListener listener = new
+		model.addChangeListener(new
 				ChangeListener()
 				{
 					@Override
@@ -35,8 +35,7 @@ public class GuestMenuPanel extends JPanel
 						name.setText("<html>User:<br>" + 
 								model.getCurrentUserName() + "</html>");
 					}
-				};
-		model.addChangeListener(listener);
+				});
 		c.weightx = 1;
 		c.weighty = 1;
 		c.insets = new Insets(10, 10, 10, 10); 

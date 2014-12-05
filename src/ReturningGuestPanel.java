@@ -69,7 +69,7 @@ public class ReturningGuestPanel extends JPanel
 		c.gridy = 2;
 		this.add(backButton, c);
 		
-		JButton submitButton = new JButton("Submit");
+		JButton submitButton = new JButton("Sign in");
 		submitButton.addActionListener(new 
 				ActionListener()
 				{

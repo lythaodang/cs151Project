@@ -48,7 +48,7 @@ public class Model
 	private GregorianCalendar selectedDate;
 	
 	/**
-	 * Constructs the database. Loads the 
+	 * Constructs the database. Loads the serialized accounts and reservations.
 	 */
 	public Model()
 	{
@@ -404,11 +404,6 @@ public class Model
 			out.close();
 			file.close();
 
-			file = new FileOutputStream("rooms.ser");
-			out = new ObjectOutputStream(file);
-			out.writeObject(rooms);
-			file.close();
-			
 			file = new FileOutputStream("reservations.ser");
 			out = new ObjectOutputStream(file);
 			out.writeObject(reservations);
@@ -436,12 +431,6 @@ public class Model
 			input.close();
 			file.close();
 
-			file = new FileInputStream("rooms.ser");
-			input = new ObjectInputStream(file);
-			rooms = (ArrayList<Room>) input.readObject();
-			input.close();
-			file.close();
-			
 			file = new FileInputStream("reservations.ser");
 			input = new ObjectInputStream(file);
 			reservations = (ArrayList<Reservation>) input.readObject();

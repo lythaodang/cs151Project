@@ -88,6 +88,7 @@ public class ViewCancelPanel extends JPanel
 					@Override
 					public void actionPerformed(ActionEvent e)
 					{
+						list.clearSelection();
 						manager.switchPanel("Guest Menu");
 					}
 				});
