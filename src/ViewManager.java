@@ -52,13 +52,8 @@ public class ViewManager
 		frame.setSize(700, 500);
 		frame.setLocationRelativeTo(null);
 		frame.setResizable(false);
-		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
-		
-		JOptionPane.showMessageDialog(new JFrame(), 
-				"<html>Welcome to InfiniteLoops Hotel!<br>"
-				+ "Please select a type of user.</html>", 
-				"(: Welcome :)", JOptionPane.OK_OPTION);
 	}
 
 	/**
@@ -77,12 +72,6 @@ public class ViewManager
 	public void switchPanel(String panelName)
 	{
 		cardLayout.show(cards, panelName);
-		
-		if (panelName.equals("Initial"))
-			JOptionPane.showMessageDialog(new JFrame(), 
-					"<html>Welcome to InfiniteLoops Hotel!<br>"
-					+ "Please select a type of user.</html>", 
-					"(: Welcome :)", JOptionPane.OK_OPTION);
 	}
 
 	/**

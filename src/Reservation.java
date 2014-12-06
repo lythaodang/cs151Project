@@ -110,6 +110,6 @@ public class Reservation implements Serializable
 		if (this.hashCode() == obj.hashCode())
 			return true;
 		
-		return true;
+		return false;
 	}
 }
