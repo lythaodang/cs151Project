@@ -16,7 +16,11 @@ public class NewGuestPanel extends JPanel
 	private GridBagConstraints c;
 	private final Model model;
 	private ViewManager manager;
-
+	
+	/**
+	 * Constructor
+	 * @param manager the view
+	 */
 	public NewGuestPanel(final ViewManager manager)
 	{
 		this.manager = manager;
@@ -29,7 +33,10 @@ public class NewGuestPanel extends JPanel
 		this.addLabels();
 		this.addDataEntry();
 	}
-
+	
+	/**
+	 * Adds instructions to create new guest
+	 */
 	private void addInstructions()
 	{
 		JLabel instructions = new JLabel("<html>Fill out the following information."
@@ -39,7 +46,10 @@ public class NewGuestPanel extends JPanel
 		c.gridwidth = 2;
 		this.add(instructions, c);
 	}
-
+	
+	/**
+	 * Adds the labels for First name, Last name, and User ID.
+	 */
 	private void addLabels()
 	{
 		JLabel firstName = new JLabel("First name:");
@@ -60,7 +70,10 @@ public class NewGuestPanel extends JPanel
 		c.gridy = 3;
 		this.add(userID, c);
 	}
-
+	
+	/**
+	 * Adds TextFields for data entry
+	 */
 	private void addDataEntry()
 	{
 		final JTextField firstName = new JTextField();
@@ -120,6 +133,14 @@ public class NewGuestPanel extends JPanel
 		this.add(submitButton, c);
 	}
 	
+	
+	/**
+	 * Checks if entry is valid
+	 * @param firstName the first name
+	 * @param lastName the last name
+	 * @param userID the user id
+	 * @return true if input is valid else false
+	 */
 	private boolean validEntry(String firstName, String lastName, String userID)
 	{
 		String message = "";

@@ -74,6 +74,10 @@ public class Model
 		deserialize();
 	}
 	
+	/**
+	 * Gets the current transaction of reservations
+	 * @return the reservations
+	 */
 	public ArrayList<Reservation> getTransaction()
 	{
 		return transaction;
@@ -124,34 +128,57 @@ public class Model
 		return result;
 	}
 	
+	/**
+	 * Compares the dates
+	 * @param date1 the first date
+	 * @param date2 the second date
+	 * @return
+	 */
 	public boolean compareDates(GregorianCalendar date1, GregorianCalendar date2)
 	{
 		return new SimpleDateFormat("MM/dd/yyyy").format(date1.getTime()).
 				equals(new SimpleDateFormat("MM/dd/yyyy").format(date2.getTime()));
 	}
 	
+	/**
+	 * Gets the selected date
+	 * @return the selected date
+	 */
 	public GregorianCalendar getSelectedDate()
 	{
 		return selectedDate;
 	}
 	
+	/**
+	 * Sets the selected date
+	 * @param date the date
+	 */
 	public void setSelectedDate(GregorianCalendar date)
 	{
 		selectedDate = (GregorianCalendar) date.clone();
 		update();
 	}
 	
+	/**
+	 * Sets the selected room
+	 * @param room the Room
+	 */
 	public void setSelectedRoom(Room room)
 	{
 		selectedRoom = room;
 	}
-
+	
+	/**
+	 * Gets the selected room
+	 * @return the selected Room
+	 */
 	public Room getSelectedRoom()
 	{
 		return selectedRoom;
 	}
 	
 	/**
+	 * Sets the cost
 	 * @param currSelectedCost the cost to set
 	 */
 	public void setCost(int cost)
@@ -161,6 +188,7 @@ public class Model
 	}
 
 	/**
+	 * Sets the check-in
 	 * @param checkIn the checkIn to set
 	 */
 	public void setCheckIn(GregorianCalendar checkIn)
@@ -170,6 +198,7 @@ public class Model
 	}
 
 	/**
+	 * Sets the check-out
 	 * @param checkOut the checkOut to set
 	 */
 	public void setCheckOut(GregorianCalendar checkOut)
@@ -177,7 +206,10 @@ public class Model
 		this.checkOut = checkOut;
 		update();
 	}
-
+	
+	/**
+	 * Adds reservations
+	 */
 	public void addReservation()
 	{
 		Reservation newReservation = new Reservation(selectedRoom, checkIn, checkOut, currentUser);
@@ -186,6 +218,10 @@ public class Model
 		transaction.add(newReservation);
 	}
 	
+	/**
+	 * Cancels the reservation
+	 * @param r the reservation
+	 */
 	public void cancelReservation(Reservation r)
 	{
 		reservations.remove(r);
@@ -314,7 +350,11 @@ public class Model
 
 		return result + "</html>";
 	}
-
+	
+	/**
+	 * Gets teh available rooms
+	 * @return the list of rooms
+	 */
 	public ArrayList<Room> getAvailRooms()
 	{
 		ArrayList<Room> availRooms = new ArrayList<Room>();
@@ -374,6 +414,7 @@ public class Model
 	}
 
 	/**
+	 * Adds the changelisteners
 	 * @param accounts the accounts to set
 	 */
 	public void addChangeListener(ChangeListener listener)

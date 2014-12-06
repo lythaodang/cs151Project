@@ -15,6 +15,10 @@ public class LuxuryRoom implements Room, Serializable
 	private final double COST = 200;
 	private int roomNumber;
 	
+	/**
+	 * The constructor for LuxaryRooms
+	 * @param roomNumber the room number
+	 */
 	public LuxuryRoom(int roomNumber)
 	{
 		this.roomNumber = roomNumber;

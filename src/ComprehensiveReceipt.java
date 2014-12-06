@@ -25,7 +25,11 @@ public class ComprehensiveReceipt implements Receipt
 	{
 		this.user = user;
 	}
-
+	
+	/**
+	 * Sets the user
+	 * @param user the user
+	 */
 	public void setUser(Account user)
 	{
 		this.user = user;

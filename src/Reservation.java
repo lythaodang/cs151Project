@@ -35,7 +35,11 @@ public class Reservation implements Serializable
 		this.userID = userID;
 		days = calculateDays();
 	}
-
+	
+	/**
+	 * Calculates the dates
+	 * @return the number of days calculated
+	 */
 	private int calculateDays()
 	{
 		GregorianCalendar temp = (GregorianCalendar)start.clone();
@@ -48,16 +52,28 @@ public class Reservation implements Serializable
 		return count;
 	}
 	
+	/**
+	 * Gets the room
+	 * @return the Room
+	 */
 	public Room getRoom()
 	{
 		return room;
 	}
 	
+	/**
+	 * Gets the cost
+	 * @return the cost
+	 */
 	public double getCost()
 	{
 		return days * room.getCost();
 	}
-
+	
+	/**
+	 * Gets the days
+	 * @return the days
+	 */
 	public int getDays()
 	{
 		return days;
@@ -89,7 +105,11 @@ public class Reservation implements Serializable
 	{
 		return userID;
 	}
-
+	
+	/**
+	 * String representation of reservation information
+	 * @return the reservation information
+	 */
 	public String toString()
 	{
 		return room.toString() + " " + " \n" + 

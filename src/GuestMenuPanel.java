@@ -16,6 +16,10 @@ public class GuestMenuPanel extends JPanel
 	private final Model model;
 	private ViewManager manager;
 	
+	/**
+	 * Constructor for GuestMenuPanel
+	 * @param manager the view
+	 */
 	public GuestMenuPanel(final ViewManager manager)
 	{
 		this.manager = manager;

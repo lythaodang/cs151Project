@@ -16,6 +16,10 @@ import javax.swing.text.DefaultCaret;
 
 public class ReceiptPanel extends JPanel
 {
+	/**
+	 * Constructor
+	 * @param manager the view
+	 */
 	public ReceiptPanel(final ViewManager manager)
 	{
 		final Model model = manager.getModel();

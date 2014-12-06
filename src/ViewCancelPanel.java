@@ -17,6 +17,10 @@ import javax.swing.event.ChangeListener;
 
 public class ViewCancelPanel extends JPanel
 {	
+	/**
+	 * Constructor
+	 * @param manager the view
+	 */
 	public ViewCancelPanel(final ViewManager manager)
 	{
 		final Model model = manager.getModel();

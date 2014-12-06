@@ -86,16 +86,28 @@ public class Account implements Serializable
 		this.lastName = lastName;
 	}
 	
+	/**
+	 * Gets the reservations
+	 * @return the reservations
+	 */
 	public ArrayList<Reservation> getReservations()
 	{
 		return reservations;
 	}
 	
+	/**
+	 * Adds the reservation
+	 * @param r the reservation
+	 */
 	public void addReservation(Reservation r)
 	{
 		reservations.add(r);
 	}
 	
+	/**
+	 * Cancels the reservation
+	 * @param r the reservation
+	 */
 	public void cancelReservation(Reservation r)
 	{
 		reservations.remove(r);

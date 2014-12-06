@@ -31,6 +31,10 @@ public class MakeReservationPanel extends JPanel
 	private final Model model;
 	private ViewManager manager;
 	
+	/**
+	 * Constructor for make reservation panel
+	 * @param manager the view
+	 */
 	public MakeReservationPanel(final ViewManager manager)
 	{
 		this.manager = manager;
@@ -45,7 +49,10 @@ public class MakeReservationPanel extends JPanel
 		addControllers();
 		addView();
 	}
-		
+	
+	/**
+	 * Addes instructions for making reservation
+	 */
 	private void addInstructions()
 	{
 		JLabel instructions = new JLabel("<html>Please enter a check-in and "
@@ -68,6 +75,9 @@ public class MakeReservationPanel extends JPanel
 		this.add(checkOut, c);
 	}
 	
+	/**
+	 * Adds controllers to view
+	 */
 	public void addControllers()
 	{	
 		final JTextField checkIn = new JTextField();
@@ -180,6 +190,11 @@ public class MakeReservationPanel extends JPanel
 		private JTextField tf;
 		private String inOrOut;
 		
+		/**
+		 * Listener for text field
+		 * @param tf the JTextField
+		 * @param inOrOut check in or check out
+		 */
 		public TextFieldListener(JTextField tf, String inOrOut)
 		{
 			this.tf = tf;
@@ -245,6 +260,9 @@ public class MakeReservationPanel extends JPanel
 		}
 	}
 	
+	/**
+	 * Adds the view
+	 */
 	private void addView()
 	{
 		final JLabel availableLabel = new JLabel(model.getValidityOfInput());
@@ -284,6 +302,11 @@ public class MakeReservationPanel extends JPanel
 				});
 	}
 	
+	/**
+	 * Checks if date is valid
+	 * @param input the date
+	 * @return true if date is valid else false
+	 */
 	private boolean isValidDate(String input) 
 	{
       try 

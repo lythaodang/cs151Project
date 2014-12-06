@@ -14,6 +14,10 @@ public class NormalRoom implements Room, Serializable
 	private final double COST = 80;
 	private int roomNumber;
 	
+	/**
+	 * Constructor
+	 * @param roomNumber the room number
+	 */
 	public NormalRoom(int roomNumber)
 	{
 		this.roomNumber = roomNumber;

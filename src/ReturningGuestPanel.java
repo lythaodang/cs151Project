@@ -18,6 +18,10 @@ public class ReturningGuestPanel extends JPanel
 	private final Model model;
 	private ViewManager manager;
 	
+	/**
+	 * Constructor
+	 * @param manager the view
+	 */
 	public ReturningGuestPanel(final ViewManager manager)
 	{
 		this.manager = manager;
@@ -30,6 +34,9 @@ public class ReturningGuestPanel extends JPanel
 		this.addDataEntry();
 	}
 	
+	/**
+	 * Adds instructions to make reservation
+	 */
 	private void addInstructions()
 	{	
 		JLabel instructions = new JLabel("<html>Please enter your user ID to "
@@ -39,6 +46,9 @@ public class ReturningGuestPanel extends JPanel
 		this.add(instructions, c);
 	}
 	
+	/**
+	 * Adds data entry for user ID
+	 */
 	private void addDataEntry()
 	{
 		JLabel userIDLabel = new JLabel("Enter user ID:");

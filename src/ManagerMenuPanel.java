@@ -17,6 +17,10 @@ public class ManagerMenuPanel extends JPanel
 	private final Model model;
 	private ViewManager manager;
 	
+	/**
+	 * Constructor
+	 * @param manager the view
+	 */
 	public ManagerMenuPanel(final ViewManager manager)
 	{
 		this.manager = manager;

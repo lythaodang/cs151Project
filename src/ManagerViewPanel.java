@@ -37,7 +37,11 @@ public class ManagerViewPanel extends JPanel
 	private final Model model;
 	private ViewManager manager;
 	private JButton selectedDay;
-
+	
+	/**
+	 * Constructor for Manager view panel
+	 * @param manager the view
+	 */
 	public ManagerViewPanel(final ViewManager manager)
 	{
 		this.manager = manager;
@@ -54,7 +58,10 @@ public class ManagerViewPanel extends JPanel
 		addRoomInfo();
 		model.setSelectedDate(Model.TODAY);
 	}
-
+	
+	/**
+	 * Adds drop down menu
+	 */
 	public void addDropDown()
 	{
 		JPanel dropDownPanel = new JPanel(new GridLayout(1, 2, 10, 10));
@@ -126,6 +133,9 @@ public class ManagerViewPanel extends JPanel
 		this.add(back, c);
 	}
 	
+	/**
+	 * Adds Calendar
+	 */
 	public void addCalendar()
 	{	
 		JPanel calendarPanel = new JPanel(new GridLayout(
@@ -211,6 +221,9 @@ public class ManagerViewPanel extends JPanel
 		add(calendarPanel, c);
 	}
 	
+	/**
+	 * Adds room information
+	 */
 	public void addRoomInfo()
 	{
 		final JTextArea roomInfo = new JTextArea("Room Information");
