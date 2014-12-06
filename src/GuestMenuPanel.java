@@ -1,34 +1,28 @@
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public class GuestMenuPanel extends JPanel
+/**
+ * COPYRIGHT 2014 InfiniteLoops. All Rights Reserved. 
+ * Hotel Management
+ * CS151 Group Project
+ * @author Mike Phe, Ly Dang, Andrew Yobs
+ * @version 1.00 2014/10/30
+ */
+
+@SuppressWarnings("serial")
+public class GuestMenuPanel extends BasicPanel
 {
-	private GridBagConstraints c;
-	private final Model model;
-	private ViewManager manager;
-	
 	/**
 	 * Constructor for GuestMenuPanel
-	 * @param manager the view
+	 * @param m the view
 	 */
-	public GuestMenuPanel(final ViewManager manager)
+	public GuestMenuPanel(ViewManager m)
 	{
-		this.manager = manager;
-		model = manager.getModel();
-		this.setLayout(new GridBagLayout());
-		c = new GridBagConstraints();
-		c.fill = GridBagConstraints.BOTH;
-		c.insets = new Insets(25, 10, 25, 10);
-	
+		super(m);
+		
+		c.weighty = 1;
+		
 		final JLabel name = new JLabel();
 		model.addChangeListener(new
 				ChangeListener()
@@ -36,55 +30,16 @@ public class GuestMenuPanel extends JPanel
 					@Override
 					public void stateChanged(ChangeEvent event)
 					{
-						name.setText("<html>User:<br>" + 
-								model.getCurrentUserName() + "</html>");
+						if (model.getCurrentUser() != null)
+							name.setText("<html>User:<br>" + model.getCurrentUser().getName());
 					}
 				});
-		c.weightx = 1;
-		c.weighty = 1;
-		c.insets = new Insets(10, 10, 10, 10); 
-		this.add(name, c);
+		addComponent(name, 0, 0);
 		
-		JButton backButton = new JButton("Sign out");
-		backButton.addActionListener(new 
-				ActionListener()
-				{
-					@Override
-					public void actionPerformed(ActionEvent e)
-					{
-						model.setCurrentUser(null);
-						manager.switchPanel("Initial");
-					}
-				});
-		c.gridx = 1;
-		this.add(backButton, c);
+		addSignOutButton("Initial", 1, 0);
 		
-		JButton make = new JButton("Make a Reservation");
-		make.addActionListener(new 
-				ActionListener()
-				{
-					@Override
-					public void actionPerformed(ActionEvent e)
-					{
-						manager.switchPanel("Make a Reservation");
-					}
-				});
 		c.gridwidth = 2;
-		c.gridx = 0;
-		c.gridy = 1;
-		this.add(make, c);
-		
-		JButton viewCancel = new JButton("View/Cancel a Reservation");
-		viewCancel.addActionListener(new 
-				ActionListener()
-				{
-					@Override
-					public void actionPerformed(ActionEvent e)
-					{
-						manager.switchPanel("View/Cancel a Reservation");
-					}
-				});
-		c.gridy = 2;
-		this.add(viewCancel, c);
+		addNavigationButton("Make a Reservation", "Make Reservation", 0, 1);
+		addNavigationButton("View/Cancel a Reservation", "View/Cancel", 0, 2);
 	}
 }

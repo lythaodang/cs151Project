@@ -1,7 +1,7 @@
 /**
- * COPYRIGHT 2014 InfiniteLoops. All Rights Reserved.
- * Comment goes here
- * Solves CS151 Group Project
+ * COPYRIGHT 2014 InfiniteLoops. All Rights Reserved. 
+ * Hotel Management
+ * CS151 Group Project
  * @author Mike Phe, Ly Dang, Andrew Yobs
  * @version 1.00 2014/10/30
  */
@@ -18,8 +18,7 @@ public class ComprehensiveReceipt implements Receipt
 	/**
 	 * Takes in an account. 
 	 * This receipt will display all reservations made by the user.
-	 * @param roomCost Cost of the room per night.
-	 * @param days Number of nights stayed.
+	 * @param user the current user's account
 	 */
 	public ComprehensiveReceipt(Account user)
 	{
@@ -41,20 +40,22 @@ public class ComprehensiveReceipt implements Receipt
 	 */
 	public String toString()
 	{
-		String receipt = "Name: " + user.getFirstName() + " " + user.getLastName()
-				+ "\nUser ID: " + user.getUserID();
+		if (user == null)
+			return "No current user";
+		
+		String receipt = String.format("Name: %s\nUser ID: %s", user.getName(), user.getUserID());
 		
 		double cost = 0;
 		int i = 1;
 		for (Reservation r : user.getReservations())
 		{
-			receipt += "\n\nReservation #" + i + "\n" + r.toString();
+			receipt += String.format("\n\nReservation # %d\n%s", i, r.toString());
 			cost += r.getCost();
 			i++;
 		}
 		
-		receipt += "\n\nSubtotal: $" + cost + "\nTax: $" + String.format("%.2f", cost * TAX)
-				+ "\nTotal: $" + String.format("%.2f", cost + (cost * TAX));
+		receipt += String.format("\n\nSubtotal: $%.2f\nTax: $%.2f\nTotal: $%.2f",
+				cost, cost * TAX, cost * TAX + cost);
 		
 		return receipt;
 	}

@@ -1,30 +1,27 @@
 import java.util.ArrayList;
 
 /**
- * COPYRIGHT 2014 InfiniteLoops. All Rights Reserved.
- * Comment goes here
- * Solves CS151 Group Project
+ * COPYRIGHT 2014 InfiniteLoops. All Rights Reserved. 
+ * Hotel Management 
+ * CS151 Group Project
  * @author Mike Phe, Ly Dang, Andrew Yobs
  * @version 1.00 2014/10/30
  */
 
 /**
- * Implements the Receipt interface, generating a simple receipt that details the
- * user's stay and amount to pay in length.
+ * Implements the Receipt interface, generating a simple receipt that details
+ * the user's stay and amount to pay in length.
  */
-public class SimpleReceipt implements Receipt
-{
-	ArrayList<Reservation> transaction;
+public class SimpleReceipt implements Receipt {
+	private ArrayList<Reservation> transaction;
 	private static double TAX = .0875;
 
 	/**
-	 * Takes in all reservations made in the current transaction.
-	 * This receipt will only display reservations made in current transaction.
-	 * @param roomCost Cost of the room per night.
-	 * @param days Number of nights stayed.
+	 * Takes in all reservations made in the current transaction. This receipt
+	 * will only display reservations made in current transaction.
+	 * @param transaction the reservations made in current transaction
 	 */
-	public SimpleReceipt (ArrayList<Reservation> transaction)
-	{
+	public SimpleReceipt(ArrayList<Reservation> transaction) {
 		this.transaction = transaction;
 	}
 
@@ -32,24 +29,26 @@ public class SimpleReceipt implements Receipt
 	 * Generates a formatted receipt in simple form.
 	 * @return simple receipt.
 	 */
-	public String toString()
-	{
+	public String toString() {
+		if (transaction.isEmpty())
+			return "";
+		
 		Account user = transaction.get(0).getUserID();
-		String receipt = "Name: " + user.getFirstName() + " " + user.getLastName()
-				+ "\nUser ID: " + user.getUserID();
+		String receipt = String.format("Name: %s\nUser ID: %s", user.getName(), 
+				user.getUserID());
 
 		double cost = 0;
 		int i = 1;
 		for (Reservation r : transaction)
 		{
-			receipt += "\n\nReservation #" + i + "\n" + r.toString();
+			receipt += String.format("\n\nReservation # %d\n%s", i, r.toString());
 			cost += r.getCost();
 			i++;
 		}
-
-		receipt += "\n\nSubtotal: $" + cost + "\nTax: $" + String.format("%.2f", cost * TAX)
-				+ "\nTotal: $" + String.format("%.2f", cost + (cost * TAX));
-
+		
+		receipt += String.format("\n\nSubtotal: $%.2f\nTax: $%.2f\nTotal: $%.2f",
+				cost, cost * TAX, cost * TAX + cost);
+		
 		return receipt;
 	}
 }

@@ -2,33 +2,30 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
- * COPYRIGHT 2014 InfiniteLoops. All Rights Reserved.
- * Comment goes here
- * Solves CS151 Group Project
+ * COPYRIGHT 2014 InfiniteLoops. All Rights Reserved. 
+ * Hotel Management
+ * CS151 Group Project
  * @author Mike Phe, Ly Dang, Andrew Yobs
  * @version 1.00 2014/10/30
- */ 
-	
-/**
- * A user's account. 
  */
-public class Account implements Serializable
-{
-	private String userID;
-	private String firstName;
-	private String lastName;
+
+/**
+ * A user's account.
+ */
+@SuppressWarnings("serial")
+public class Account implements Serializable {
+	final private String userID; // cannot be changed once account is created
+	private String name;
 	private ArrayList<Reservation> reservations;
-	
+
 	/**
 	 * Create an account with a userID and name.
 	 * @param userID the user's ID
 	 * @param name the user's name
 	 */
-	public Account(String firstName, String lastName, String userID)
-	{
+	public Account(String name, String userID) {
 		this.userID = userID;
-		this.firstName = firstName;
-		this.lastName = lastName;
+		this.name = name;
 		reservations = new ArrayList<Reservation>();
 	}
 
@@ -36,95 +33,58 @@ public class Account implements Serializable
 	 * Returns the user's ID.
 	 * @return the userID
 	 */
-	public String getUserID()
-	{
+	public String getUserID() {
 		return userID;
 	}
 
 	/**
-	 * Sets the user's ID.
-	 * @param userID the userID to set
-	 */
-	public void setUserID(String userID)
-	{
-		this.userID = userID;
-	}
-
-	/**
-	 * Gets the user's first name.
+	 * Gets the user's name.
 	 * @return the name
 	 */
-	public String getFirstName()
-	{
-		return firstName;
+	public String getName() {
+		return name.toUpperCase();
 	}
 
 	/**
-	 * Sets the user's first name.
-	 * @param name the name to set
+	 * Sets the user's name.
+	 * @param name the name
 	 */
-	public void setFirstName(String firstName)
-	{
-		this.firstName = firstName;
-	}
-	
-	/**
-	 * Gets the user's last name.
-	 * @return the name
-	 */
-	public String getLastName()
-	{
-		return lastName;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	/**
-	 * Sets the user's last name.
-	 * @param name the name to set
-	 */
-	public void setLastName(String lastName)
-	{
-		this.lastName = lastName;
-	}
-	
-	/**
-	 * Gets the reservations
+	 * Gets the reservations.
 	 * @return the reservations
 	 */
-	public ArrayList<Reservation> getReservations()
-	{
+	public ArrayList<Reservation> getReservations() {
 		return reservations;
 	}
-	
+
 	/**
-	 * Adds the reservation
+	 * Adds the reservation.
 	 * @param r the reservation
 	 */
-	public void addReservation(Reservation r)
-	{
+	public void addReservation(Reservation r) {
 		reservations.add(r);
 	}
-	
+
 	/**
-	 * Cancels the reservation
+	 * Cancels the reservation.
 	 * @param r the reservation
 	 */
-	public void cancelReservation(Reservation r)
-	{
+	public void cancelReservation(Reservation r) {
 		reservations.remove(r);
 	}
-	
+
 	@Override
-	public int hashCode()
-	{
-		return userID.hashCode();
+	public int hashCode() {
+		return userID.hashCode(); // user ID is the hash code
 	}
-	
+
 	@Override
-	public boolean equals(Object obj)
-	{
-		if (this.hashCode() == obj.hashCode())
-			return true;
-		
-		return false;
+	public boolean equals(Object obj) {
+		if (this.hashCode() == obj.hashCode()) return true; 
+		else return false;
 	}
 }
