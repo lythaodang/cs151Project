@@ -20,6 +20,9 @@ import javax.swing.JTextField;
  * @version 1.00 2014/10/30
  */
 
+/**
+ * The basic panel with the common factors between all other panels.
+ */
 @SuppressWarnings("serial")
 public class BasicPanel extends JPanel {
 	protected GridBagConstraints c;
@@ -28,6 +31,10 @@ public class BasicPanel extends JPanel {
 	protected ArrayList<JTextField> tfs;
 	protected ArrayList<JTextArea> tas;
 	
+	/** 
+	 * Constructs the panel with a view manager.
+	 * @param manager the view manager
+	 */
 	public BasicPanel(ViewManager manager) {
 		this.manager = manager;
 		model = manager.getModel();
@@ -41,6 +48,12 @@ public class BasicPanel extends JPanel {
 		c.weightx = 1;
 	}
 	
+	/**
+	 * Adds a component to the panel at location x, y
+	 * @param comp the component to add
+	 * @param x the x location
+	 * @param y the y location
+	 */
 	protected void addComponent(JComponent comp, int x, int y) {
 		c.gridx = x;
 		c.gridy = y;
@@ -52,11 +65,22 @@ public class BasicPanel extends JPanel {
 			tas.add((JTextArea) comp);
 	}
 	
+	/**
+	 * Adds instructions to the panel.
+	 * @param instructions the instructions to add
+	 */
 	protected void addInstructions(String instructions) {
 		JLabel label = new JLabel(instructions);
 		addComponent(label, 0, 0);
 	}
 	
+	/**
+	 * Adds a button for navigation.
+	 * @param text the text displayed on the button
+	 * @param backTo the panel to switch back to
+	 * @param x the x location 
+	 * @param y the y location
+	 */
 	protected void addNavigationButton(String text, final String backTo, int x, int y) {
 		JButton button = new JButton(text);
 		button.addActionListener(new ActionListener() {
@@ -69,6 +93,12 @@ public class BasicPanel extends JPanel {
 		addComponent(button, x, y);
 	}
 	
+	/**
+	 * Adds a sign out button.
+	 * @param backTo the panel to switch back to
+	 * @param x the x location
+	 * @param y the y location
+	 */
 	protected void addSignOutButton(final String backTo, int x, int y) {
 		JButton button = new JButton("Sign Out");
 		button.addActionListener(new ActionListener() {
@@ -82,11 +112,20 @@ public class BasicPanel extends JPanel {
 		addComponent(button, x, y);
 	}
 	
+	/**
+	 * Adds a label to the panel.
+	 * @param text the text to display
+	 * @param x the x location
+	 * @param y the y location
+	 */
 	protected void addLabel(String text, int x, int y) {
 		JLabel label = new JLabel(text);
 		addComponent(label, x, y);
 	}
 	
+	/**
+	 * Clears all textfields and textareas on the panel.
+	 */
 	protected void clearComponents() {
 		for (JTextField tf : tfs)
 			tf.setText("");

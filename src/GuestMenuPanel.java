@@ -10,6 +10,9 @@ import javax.swing.event.ChangeListener;
  * @version 1.00 2014/10/30
  */
 
+/**
+ * The panel in which the guest can choose to make, view, and cancel reservations.
+ */
 @SuppressWarnings("serial")
 public class GuestMenuPanel extends BasicPanel
 {

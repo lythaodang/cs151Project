@@ -26,10 +26,10 @@ import javax.swing.event.ListSelectionListener;
  * @version 1.00 2014/10/30
  */
 
-@SuppressWarnings("serial")
 /**
  * The panel in which the user can make a reservation.
  */
+@SuppressWarnings("serial")
 public class MakeReservationPanel extends BasicPanel {
 	/**
 	 * Constructor for make reservation panel

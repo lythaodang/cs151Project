@@ -105,7 +105,7 @@ public class Reservation implements Serializable {
 	 * @return the reservation information
 	 */
 	public String toString() {
-		return String.format("%s \n%s to %s\n Cost: %d days X $%.2f a night = "
+		return String.format("%s \n%s to %s \nCost: %d days X $%.2f a night = "
 				+ "$%.2f", room.toString(), 
 				new SimpleDateFormat("MM/dd/yyyy").format(start.getTime()),
 				new SimpleDateFormat("MM/dd/yyyy").format(end.getTime()),

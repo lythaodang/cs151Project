@@ -8,10 +8,10 @@ import java.io.Serializable;
  * @version 1.00 2014/10/30
  */
 
-@SuppressWarnings("serial")
 /**
  * The representation of a normal room.
  */
+@SuppressWarnings("serial")
 public class NormalRoom implements Room, Serializable {
 	private final double COST = 80;
 	private final int roomNumber;

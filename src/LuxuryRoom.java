@@ -8,10 +8,10 @@ import java.io.Serializable;
  * @version 1.00 2014/10/30
  */
 
-@SuppressWarnings("serial")
 /**
  * The representation of a luxury room.
  */
+@SuppressWarnings("serial")
 public class LuxuryRoom implements Room, Serializable {
 	private final double COST = 200;
 	private final int roomNumber;

@@ -14,6 +14,9 @@ import javax.swing.JTextField;
  * @version 1.00 2014/10/30
  */
 
+/**
+ * A panel in which the user can create an account.
+ */
 @SuppressWarnings("serial")
 public class NewGuestPanel extends BasicPanel {
 

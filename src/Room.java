@@ -6,6 +6,9 @@
  * @version 1.00 2014/10/30
  */
 
+/**
+ * The interface of a room.
+ */
 public interface Room {
 	/**
 	 * Gets the room number.
